@@ -4,16 +4,12 @@ This module contains the User endpoints, login and signup
 """
 
 from flask_restplus import Resource
-# from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token
 
 from api import api
 from api.v1.database import DatabaseConnection
 from api.v1.serializers import user_creation_model, login_model
 from ..classes import Users
-
-# instance of database connection
-conn = DatabaseConnection()
-cursor = conn.cursor
 
 
 @api.route('/api/v1/auth/signup')
@@ -50,8 +46,11 @@ class Login(Resource):
 
         login_data = api.payload
 
-        Users.login_user(login_data=login_data)
+        output = Users.login_user(login_data=login_data)
 
-        # auth_token = create_access_token(row)
+        if output:
+            token = create_access_token(login_data['username'])
 
-        return 'Welcome', 200
+            return 'Welcome', 200
+        else:
+            return 'Incorrect username or password', 400

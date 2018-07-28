@@ -22,20 +22,32 @@ class DatabaseConnection:
         except(Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-    def create_table(self):
+    def create_users_table(self):
         """Method to create user table if none existant"""
 
-        create_table_command = ("CREATE TABLE IF NOT EXISTS users"
+        user_table_command = ("CREATE TABLE IF NOT EXISTS users"
                                 "(user_id SERIAL PRIMARY KEY,"
                                 "username VARCHAR(100) NOT NULL,"
                                 "first_name varchar(100) NOT NULL,"
-                                "second_name varchar(100) NOT NULL,"
+                                "last_name varchar(100) NOT NULL,"
                                 "email varchar(100) NOT NULL,"
                                 "password varchar(100) NOT NULL)")
+        self.cursor.execute(user_table_command)
 
-        self.cursor.execute(create_table_command)
+    def create_entries_table(self):
+        """Method to create user table if none existant"""
+
+        entry_table_command = ("CREATE TABLE IF NOT EXISTS entries"
+                                "(entry_id SERIAL PRIMARY KEY,"
+                                "title VARCHAR(100) NOT NULL,"
+                                "content varchar(255) NOT NULL,"
+                                "entry_date varchar(100) NOT NULL,"
+                                "entry_time varchar(100) NOT NULL)")
+
+        self.cursor.execute(entry_table_command)
 
 
 if __name__ == '__main__':
     db = DatabaseConnection()
-    db.create_table()
+    db.create_users_table()
+    db.create_entries_table()

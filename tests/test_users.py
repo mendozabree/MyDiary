@@ -2,6 +2,7 @@ import unittest
 import json
 
 from api import app
+from api.v1.database import DatabaseConnection
 
 
 class UserTests(unittest.TestCase):
@@ -21,6 +22,13 @@ class UserTests(unittest.TestCase):
                 'password': 'purple',
             }
         ]
+
+    def tearDown(self):
+        db = DatabaseConnection()
+        db_cursor = db.cursor
+
+        # db_cursor.clear()
+        # db.drop
 
     def test_API_can_signup_user(self):
         test_user = app.test_client(self)

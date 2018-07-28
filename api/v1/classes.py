@@ -16,7 +16,7 @@ class Users:
     def register_user(self):
 
         add_user_query = "INSERT INTO users "\
-                         "(username,first_name,second_name,email,password) "\
+                         "(username,first_name,last_name,email,password) "\
                          "VALUES (%s,%s,%s,%s,%s)"
 
         db_cursor.execute(add_user_query, (self.username, self.first_name,
@@ -32,3 +32,23 @@ class Users:
         db_cursor.execute(login_user_query, (login_data['username'],
                                              login_data['password']))
         row = db_cursor.fetchone()
+        return row
+
+
+class Entries:
+
+    def __init__(self, title, content, entry_date, entry_time):
+        
+        self.title = title
+        self.content = content
+        self.entry_date = entry_date
+        self.entry_time = entry_time
+
+    def create_entry(self):
+
+        add_user_query = "INSERT INTO entries " \
+                         "(title,content,entry_date,entry_time) " \
+                         "VALUES (%s,%s,%s,%s)"
+
+        db_cursor.execute(add_user_query, (self.title, self.content,
+                                           self.entry_date, self.entry_time))

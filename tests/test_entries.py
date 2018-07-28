@@ -15,11 +15,11 @@ class EntriesTests(unittest.TestCase):
 
         self.entries = [
             {
-                'entry_date': '18 June 2018',
-                'entry_time': '22 15',
                 'title': 'Learning Flask',
                 'content': 'Flask is a micro-framework based on python.'
-                           'Flask is useful for designing APIs.'
+                           'Flask is useful for designing APIs.',
+                'entry_date': '18 June 2018',
+                'entry_time': '22 15'
             }
         ]
 
