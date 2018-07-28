@@ -25,11 +25,17 @@ class EntriesTests(unittest.TestCase):
 
     def test_API_can_make_new_entry(self):
         test_user = app.test_client(self)
-        response = test_user.post('/api/v1/auth/signup',
+        response = test_user.post('/api/v1/entries',
                                   data=json.dumps(self.entries[0]),
                                   content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertIn('Success', str(response.data))
+
+    def test_API_can_get_all_entries(self):
+        test_user = app.test_client(self)
+        response = test_user.get('/api/v1/entries')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Learning Flask', str(response.data))
 
 
 if __name__ == '__main__':
