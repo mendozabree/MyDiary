@@ -4,12 +4,42 @@ This module contains the User endpoints, login and signup
 """
 
 from flask_restplus import Resource
+from flask import request
+import jwt
 from flask_jwt_extended import create_access_token
+import datetime
+from functools import wraps
 
-from api import api
-from api.v1.database import DatabaseConnection
+from api import api, app
 from api.v1.serializers import user_creation_model, login_model
 from ..classes import Users
+
+
+# def jwt_required(f):
+#     @wraps(f)
+#     def decorated(*args, **kwargs):
+#         token = None
+#         if 'access-token' in request.headers:
+#             token = request.headers['access-token']
+#             if token:
+#                 try:
+#                     data = jwt.decode(token, app.config['SECRET_KEY'])
+#                     current_user = data['user_id']
+#                 except jwt.ExpiredSignatureError:
+#                     return 'Your session has expired'
+#             else:
+#                 return 'Your token is missing'
+#         return f(*args, current_user, **kwargs)
+#     return decorated
+
+
+# authorizations = {'api_key': {
+#     'type': 'apiKey',
+#     'in': 'header',
+#     'name': 'access-token'
+# }}
+
+# api.authorizations = authorizations
 
 
 @api.route('/api/v1/auth/signup')
@@ -20,7 +50,7 @@ class Signup(Resource):
 
     @api.expect(user_creation_model)
     def post(self):
-        """Post method for a new user"""
+        """Method for registration of a user"""
 
         new_user_data = api.payload
 
@@ -42,15 +72,13 @@ class Login(Resource):
 
     @api.expect(login_model)
     def post(self):
-        """POST method for logging in user"""
+        """Method for logging in registered user"""
 
         login_data = api.payload
 
         output = Users.login_user(login_data=login_data)
 
         if output:
-            token = create_access_token(login_data['username'])
+            token = create_access_token(output[0])
 
-            return 'Welcome', 200
-        else:
-            return 'Incorrect username or password', 400
+        return token
