@@ -4,42 +4,14 @@ This module contains the User endpoints, login and signup
 """
 
 from flask_restplus import Resource
-from flask import request
-import jwt
 from flask_jwt_extended import create_access_token
-import datetime
-from functools import wraps
 
-from api import api, app
+from api import api
 from api.v1.serializers import user_creation_model, login_model
 from ..classes import Users
+from ..database import Users
 
-
-# def jwt_required(f):
-#     @wraps(f)
-#     def decorated(*args, **kwargs):
-#         token = None
-#         if 'access-token' in request.headers:
-#             token = request.headers['access-token']
-#             if token:
-#                 try:
-#                     data = jwt.decode(token, app.config['SECRET_KEY'])
-#                     current_user = data['user_id']
-#                 except jwt.ExpiredSignatureError:
-#                     return 'Your session has expired'
-#             else:
-#                 return 'Your token is missing'
-#         return f(*args, current_user, **kwargs)
-#     return decorated
-
-
-# authorizations = {'api_key': {
-#     'type': 'apiKey',
-#     'in': 'header',
-#     'name': 'access-token'
-# }}
-
-# api.authorizations = authorizations
+db = Users()
 
 
 @api.route('/api/v1/auth/signup')
@@ -54,14 +26,13 @@ class Signup(Resource):
 
         new_user_data = api.payload
 
-        new_user = Users(username=new_user_data['username'],
-                         first_name=new_user_data['first_name'],
-                         last_name=new_user_data['last_name'],
-                         email=new_user_data['email'],
-                         password=new_user_data['password'])
-        new_user.register_user()
-
-        return 'Success', 201
+        # new_user = Users(username=new_user_data['username'],
+        #                  first_name=new_user_data['first_name'],
+        #                  last_name=new_user_data['last_name'],
+        #                  email=new_user_data['email'],
+        #                  password=new_user_data['password'])
+        if db.register_user(new_user=new_user_data):
+            return 'Success', 201
 
 
 @api.route('/api/v1/auth/login')
@@ -76,9 +47,10 @@ class Login(Resource):
 
         login_data = api.payload
 
-        output = Users.login_user(login_data=login_data)
+        # output = Users.login_user(login_data=login_data)
 
-        if output:
-            token = create_access_token(output[0])
+        user_id = db.login_user(login_data=login_data)
+        if user_id:
+            token = create_access_token(user_id[0])
 
         return token
