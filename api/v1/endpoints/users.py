@@ -24,15 +24,8 @@ class Signup(Resource):
     def post(self):
         """Method for registration of a user"""
 
-        new_user_data = api.payload
-
-        # new_user = Users(username=new_user_data['username'],
-        #                  first_name=new_user_data['first_name'],
-        #                  last_name=new_user_data['last_name'],
-        #                  email=new_user_data['email'],
-        #                  password=new_user_data['password'])
-        if db.register_user(new_user=new_user_data):
-            return 'Success', 201
+        result = db.register_user(new_user_data=api.payload)
+        return result
 
 
 @api.route('/api/v1/auth/login')
@@ -52,5 +45,7 @@ class Login(Resource):
         user_id = db.login_user(login_data=login_data)
         if user_id:
             token = create_access_token(user_id[0])
-
-        return token
+            return {'message':{'response': 'User Logged In',
+                                'access-token': token}}, 200
+        else:
+            return {'message': 'Incorrect username or password'}, 400

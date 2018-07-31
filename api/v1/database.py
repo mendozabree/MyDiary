@@ -72,7 +72,7 @@ class Users(DatabaseConnection):
                     pending_data=new_user_data
                                            )
 
-        if not any(fields_check_result.values()):
+        if not fields_check_result:
 
             new_user_command = ("INSERT INTO users"\
                                 "(username,first_name,last_name,email,password)"\
@@ -94,6 +94,10 @@ class Users(DatabaseConnection):
         :return:
         """
 
+        expected_key_list = ['username', 'password']
+        fields_check_result = fields_check(expected_key_list=expected_key_list, pending_data=login_data)
+
+        #if not fields_check_result:
         login_user_cmd = ("SELECT user_id FROM users WHERE"\
                           " username = %s AND"\
                           " password = %s")
@@ -101,6 +105,8 @@ class Users(DatabaseConnection):
                                              login_data['password']))
         row = self.cursor.fetchone()
         return row
+        # else:
+        #     return {'message': fields_check_result}, 400
 
 
 class Entries(DatabaseConnection):
@@ -171,7 +177,6 @@ class Entries(DatabaseConnection):
 
 def fields_check(expected_key_list, pending_data):
     messages = []
-    result = dict()
     pending_data_key_list = [*pending_data.keys()]
 
     odds = [this_key for this_key in expected_key_list if this_key not in
@@ -182,7 +187,6 @@ def fields_check(expected_key_list, pending_data):
         for key in odds:
             error = 'Missing ' + key
             messages.append(error)
-        result['code'] = 400
 
     similar = [some_key for some_key in expected_key_list if some_key in
                pending_data_key_list]
@@ -193,11 +197,9 @@ def fields_check(expected_key_list, pending_data):
         if value == '':
             missing_value = 'Please fill in ' + my_key
             messages.append(missing_value)
-            result['code'] = 400
 
-    result['message'] = messages
+    return messages
 
-    return result
 
 if __name__ == '__main__':
     db = DatabaseConnection()
