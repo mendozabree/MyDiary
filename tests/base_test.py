@@ -12,7 +12,6 @@ class MyTest(unittest.TestCase):
     #     return app
 
     def setUp(self):
-        app.config['TESTING'] = True
         dbcon = DatabaseConnection()
         dbcon.create_entries_table()
         dbcon.create_users_table()
