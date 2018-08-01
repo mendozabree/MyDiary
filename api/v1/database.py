@@ -21,7 +21,7 @@ class DatabaseConnection:
 
             self.connection = psycopg2.connect(
                 "dbname='diaries_testdb' user='postgres' host='localhost'"
-                "password='#5T0uch3' port='5432'")
+                "password='' port='5432'")
 
         # else:
         #     self.connection = psycopg2.connect(
