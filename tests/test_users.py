@@ -2,10 +2,10 @@ import json
 
 from api import app
 # from api.v1.database import DatabaseConnection
-from .base_test import MyTests
+from .base_test import MyTest
 
 
-class UserTests(MyTests):
+class UserTest(MyTest):
 
     def test_can_not_signup_user_with_missing_key(self):
         test_user = app.test_client(self)
@@ -30,7 +30,7 @@ class UserTests(MyTests):
                                   data=json.dumps(self.user[0]),
                                   content_type='application/json')
         self.assertEqual(response.status_code, 201)
-        self.assertIn('Success', str(response.data))
+        self.assertIn('User successfully registered.', str(response.data))
 
     def test_API_can_not_login_user_with_missing_value(self):
         test_user = app.test_client(self)
@@ -39,7 +39,7 @@ class UserTests(MyTests):
                                   data=json.dumps(self.user[0]),
                                   content_type='application/json')
         self.assertEqual(response.status_code, 201)
-        self.assertIn('Success', str(response.data))
+        self.assertIn('User successfully registered.', str(response.data))
         # Login user
         self.user[0]['username'] = ''
         response = test_user.post('/api/v1/auth/login',
@@ -56,7 +56,7 @@ class UserTests(MyTests):
                                   data=json.dumps(self.user[0]),
                                   content_type='application/json')
         self.assertEqual(response.status_code, 201)
-        self.assertIn('Success', str(response.data))
+        self.assertIn('User successfully registered.', str(response.data))
         # Login user
         response = test_user.post('/api/v1/auth/login',
                                   data=json.dumps(self.user[0]),

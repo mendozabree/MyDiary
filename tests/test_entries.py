@@ -1,42 +1,95 @@
-import unittest
 import json
 
 from api import app
-# from api.v1.database import DatabaseConnection
+from .base_test import MyTest
 
 
-class EntriesTests(unittest.TestCase):
+class EntryTest(MyTest):
 
-    @staticmethod
-    def create_app():
-        app['TESTING'] = True
+    def test_API_can_not_make_entry_with_missing_values(self):
+        test_user = app.test_client(self)
+        # login user
+        response = test_user.post('/api/v1/auth/login',
+                                  data=json.dumps(self.user[0]),
+                                  content_type='application/json')
+        token = json.loads(response.data.decode('utf-8').replace("'", "/"))
+        head = {'Authorization': 'Bearer {}'.format(token)}
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(token, str(response.data))
+        self.entries['title'] = ""
+        res = test_user.post('/api/v1/entries',
+                             data=json.dumps(self.entries),
+                             content_type='application/json',
+                             headers=head)
+        self.assertEqual(res.status_code, 400)
+        self.assertIn('Please fill in title', str(res.data))
 
-    def setUp(self):
+    # def test_API_can_not_make_entry_with_missing_key(self):
 
-        self.entries = [
-            {
-                'title': 'Learning Flask',
-                'content': 'Flask is a micro-framework based on python.'
-                           'Flask is useful for designing APIs.',
-                'entry_date': '18 June 2018',
-                'entry_time': '22 15'
-            }
-        ]
 
     def test_API_can_make_new_entry(self):
         test_user = app.test_client(self)
-        response = test_user.post('/api/v1/entries',
-                                  data=json.dumps(self.entries[0]),
+        # login user
+        response = test_user.post('/api/v1/auth/login',
+                                  data=json.dumps(self.user[0]),
                                   content_type='application/json')
-        self.assertEqual(response.status_code, 201)
-        self.assertIn('Success', str(response.data))
+        token = json.loads(response.data.decode('utf-8').replace("'", "/"))
+        head = {'Authorization': 'Bearer {}'.format(token)}
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(token, str(response.data))
+        res = test_user.post('/api/v1/entries',
+                             data=json.dumps(self.entries),
+                             content_type='application/json',
+                             headers=head)
+        self.assertEqual(res.status_code, 201)
+        self.assertIn('Your memory has been saved!', str(res.data))
 
     def test_API_can_get_all_entries(self):
         test_user = app.test_client(self)
-        response = test_user.get('/api/v1/entries')
+        response = test_user.post('/api/v1/auth/login',
+                                  data=json.dumps(self.user[0]),
+                                  content_type='application/json')
+        token = json.loads(response.data.decode('utf-8').replace("'", "/"))
+        head = {'Authorization': 'Bearer {}'.format(token)}
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Learning Flask', str(response.data))
+        self.assertIn(token, str(response.data))
+        res = test_user.get('/api/v1/entries', headers=head)
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Learning Flask', str(res.data))
 
+    def test_API_can_get_specific_entry(self):
+        test_user = app.test_client(self)
+        response = test_user.post('/api/v1/auth/login',
+                                  data=json.dumps(self.user[0]),
+                                  content_type='application/json')
+        token = json.loads(response.data.decode('utf-8').replace("'", "/"))
+        head = {'Authorization': 'Bearer {}'.format(token)}
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(token, str(response.data))
+        res = test_user.get('/api/v1/entries', headers=head)
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('Learning Flask', str(res.data))
 
-if __name__ == '__main__':
-    unittest.main()
+    # def test_API_can_not_modify_entry_with_missing_values(self):
+    #     test_user = app.test_client(self)
+    #     # login user
+    #     response = test_user.post('/api/v1/auth/login',
+    #                               data=json.dumps(self.user[0]),
+    #                               content_type='application/json')
+    #     token = json.loads(response.data.decode('utf-8').replace("'", "/"))
+    #     head = {'Authorization': 'Bearer {}'.format(token)}
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertIn(token, str(response.data))
+    #     res = test_user.post('/api/v1/entries',
+    #                          data=json.dumps(self.entries),
+    #                          content_type='application/json',
+    #                          headers=head)
+    #     self.assertEqual(res.status_code, 201)
+    #     self.assertIn('Your memory has been saved!', str(res.data))
+    #     # self.entries['title'] = ""
+    #     result = test_user.put('/api/v1/entries',
+    #                          data=json.dumps(self.entries),
+    #                          content_type='application/json',
+    #                          headers=head)
+    #     self.assertEqual(result.status_code, 200)
+    #     self.assertIn('Updated your entry.', str(result.data))

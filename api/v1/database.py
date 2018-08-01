@@ -5,17 +5,26 @@ import time
 import re
 from werkzeug.security import generate_password_hash
 
+from api import app
+
 
 class DatabaseConnection:
     """Class to setup database connection, cursors and """
 
     def __init__(self):
         """dB connection and cursors"""
-        self.config = None
+
+
         try:
-            self.connection = psycopg2.connect(
-                "dbname='diaries_testdb' user='admin' host='localhost'"
-                "password='diaryAdmin' port='5432'")
+            if app.config['TESTING']:
+                self.connection = psycopg2.connect(
+                    "dbname='diaries_testdb' user='admin' host='localhost'"
+                    "password='diaryAdmin' port='5432'")
+
+            else:
+                self.connection = psycopg2.connect(
+                    "dbname='diarydb' user='admin' host='localhost'"
+                    "password='diaryAdmin' port='5432'")
             self.connection.autocommit = True
 
             self.cursor = self.connection.cursor()
