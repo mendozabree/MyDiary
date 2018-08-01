@@ -2,6 +2,8 @@ import psycopg2
 import psycopg2.extras
 import datetime
 import time
+import re
+from werkzeug.security import generate_password_hash
 
 
 class DatabaseConnection:
@@ -9,10 +11,10 @@ class DatabaseConnection:
 
     def __init__(self):
         """dB connection and cursors"""
-
+        self.config = None
         try:
             self.connection = psycopg2.connect(
-                "dbname='diarydb' user='admin' host='localhost'"
+                "dbname='diaries_testdb' user='admin' host='localhost'"
                 "password='diaryAdmin' port='5432'")
             self.connection.autocommit = True
 
@@ -52,12 +54,12 @@ class DatabaseConnection:
 
         self.cursor.execute(entry_table_command)
 
-    def drop_tables(self):
-        drop_cmd = "DROP TABLE entries,users"
-        self.cursor.execute(drop_cmd)
+    # def drop_tables(self):
+    #     drop_cmd = "DROP TABLE entries,users"
+    #     self.cursor.execute(drop_cmd)
 
 
-class Users(DatabaseConnection):
+class User(DatabaseConnection):
 
     def register_user(self, new_user_data):
         """
@@ -74,16 +76,26 @@ class Users(DatabaseConnection):
 
         if not fields_check_result:
 
-            new_user_command = ("INSERT INTO users"\
-                                "(username,first_name,last_name,email,password)"\
-                                "VALUES (%s,%s,%s,%s,%s)")
-            self.cursor.execute(new_user_command, (new_user_data['username'],
-                                                   new_user_data['first_name'],
-                                                   new_user_data['last_name'],
-                                                   new_user_data['email'],
-                                                   new_user_data['password']))
+            if is_email_valid(email=new_user_data['email']):
 
-            return {'message': 'User successfully registered.'}, 201
+                new_user_command = ("INSERT INTO users"\
+                                    "(username,first_name,last_name,email,password)"\
+                                    "VALUES (%s,%s,%s,%s,%s)")
+
+                user_password = generate_password_hash(new_user_data['password'], method='sha256')
+
+
+
+                self.cursor.execute(new_user_command, (new_user_data['username'],
+                                                       new_user_data['first_name'],
+                                                       new_user_data['last_name'],
+                                                       new_user_data['email'],
+                                                       user_password))
+
+                return {'message': 'User successfully registered.'}, 201
+
+            else:
+                return {'message': 'Email is of wrong format'}, 400
 
         else:
             return {'message': fields_check_result}, 400
@@ -94,85 +106,105 @@ class Users(DatabaseConnection):
         :return:
         """
 
-        expected_key_list = ['username', 'password']
-        fields_check_result = fields_check(expected_key_list=expected_key_list, pending_data=login_data)
+        try:
+            login_user_cmd = ("SELECT user_id FROM users WHERE"\
+                              " username = %s")
+            self.cursor.execute(login_user_cmd, (login_data['username'],))
 
-        #if not fields_check_result:
-        login_user_cmd = ("SELECT user_id FROM users WHERE"\
-                          " username = %s AND"\
-                          " password = %s")
-        self.cursor.execute(login_user_cmd, (login_data['username'],
-                                             login_data['password']))
-        row = self.cursor.fetchone()
-        return row
+
+        except KeyError:
+            return {"message": "Missing username or password"}
+
+        else:
+            row = self.cursor.fetchone()
+            return row
         # else:
         #     return {'message': fields_check_result}, 400
 
 
-class Entries(DatabaseConnection):
+class Entry(DatabaseConnection):
 
     def new_entry(self, new_entry_data, current_user):
         """
         Method with sql command for new_entry
         :return:
         """
-        new_entry_cmd = ("INSERT INTO entries " \
-                         "(title,content,entry_date,entry_time,"
-                         "entry_timestamp,user_id) " \
-                         "VALUES (%s,%s,%s,%s,%s,%s)")
+        expected_key_list = ['title', 'content']
+        fields_check_result = fields_check(
+            expected_key_list=expected_key_list,
+            pending_data=new_entry_data)
 
-        entry_time = datetime.datetime.now().replace(second=0,
-                                                     microsecond=0).time()
-        entry_timestamp = time.time()
-        self.cursor.execute(new_entry_cmd, (new_entry_data['title'],
-                                            new_entry_data['content'],
-                                            datetime.date.today(),
-                                            entry_time,
-                                            entry_timestamp,
-                                            current_user))
-        return True
+        if fields_check_result:
+            return {'message': fields_check_result}, 400
+        else:
+
+            new_entry_cmd = ("INSERT INTO entries " \
+                             "(title,content,entry_date,entry_time,"
+                             "entry_timestamp,user_id) " \
+                             "VALUES (%s,%s,%s,%s,%s,%s)")
+
+            entry_time = datetime.datetime.now().replace(second=0,
+                                                         microsecond=0).time()
+            entry_timestamp = time.time()
+            self.cursor.execute(new_entry_cmd, (new_entry_data['title'],
+                                                new_entry_data['content'],
+                                                datetime.date.today(),
+                                                entry_time,
+                                                entry_timestamp,
+                                                current_user))
+            return {'message': 'Your memory has been saved!'}, 201
 
     def all_entries(self, current_user):
         """
         Method with sql for getting all entries
         :return:
         """
-        all_entries_cmd = ("SELECT title,content FROM entries "
+        all_entries_cmd = ("SELECT entry_id,title,content FROM entries "
                            "WHERE user_id = %s")
-        self.dict_cursor.execute(all_entries_cmd, (current_user,))
-        rows = self.dict_cursor.fetchall()
+
+        self.cursor.execute(all_entries_cmd, (current_user,))
+        rows = self.cursor.fetchall()
+
         return rows
 
-    def get_specific(self, entry_id):
+    def get_specific(self, entry_id, current_user):
         specific_entry_cmd = ("SELECT title,content FROM entries "
-                              "WHERE entry_id = %s")
+                              "WHERE entry_id = %s AND user_id = %s")
 
-        self.cursor.execute(specific_entry_cmd, entry_id)
-        row = self.cursor.fetchmany(1)
+        self.cursor.execute(specific_entry_cmd, (entry_id, current_user))
+        row = self.cursor.fetchone()
 
-        return row[0]
+        return row
 
     def modify_entry(self, entry_id, modify_data, current_user):
 
-        entry_time_cmd = ("SELECT entry_timestamp FROM entries WHERE "
-                          "entry_id=%s AND user_id=%s")
-        self.cursor.execute(entry_time_cmd, (entry_id, current_user))
-        row = self.cursor.fetchone()
+        expected_key_list = ['title', 'content']
 
-        creation_timestamp = float(row[0])
-        current_time = time.time()
-
-        time_diff = current_time - creation_timestamp
-
-        if time_diff > 84600.0:
-            return 'Sorry, you can no longer edit this entry.'
+        fields_check_result = fields_check(
+            expected_key_list=expected_key_list,
+            pending_data=modify_data)
+        if fields_check_result:
+            return {'messages': fields_check_result}, 400
         else:
-            modify_cmd = ("UPDATE entries SET title=%s,content=%s "
-                          "WHERE user_id=%s")
-            self.cursor.execute(modify_cmd, (modify_data['title'],
-                                             modify_data['content'],
-                                             current_user))
-            return 'Updated your entry.'
+            entry_time_cmd = ("SELECT entry_timestamp FROM entries WHERE "
+                              "entry_id=%s AND user_id=%s")
+            self.cursor.execute(entry_time_cmd, (entry_id, current_user))
+            row = self.cursor.fetchone()
+
+            creation_timestamp = float(row[0])
+            current_time = time.time()
+
+            time_diff = current_time - creation_timestamp
+
+            if time_diff > 84600.0:
+                return 'Sorry, you can no longer edit this entry.'
+            else:
+                modify_cmd = ("UPDATE entries SET title=%s,content=%s "
+                              "WHERE user_id=%s")
+                self.cursor.execute(modify_cmd, (modify_data['title'],
+                                                 modify_data['content'],
+                                                 current_user))
+                return {'message': 'Updated your entry.'}, 2
 
 
 def fields_check(expected_key_list, pending_data):
@@ -199,6 +231,12 @@ def fields_check(expected_key_list, pending_data):
             messages.append(missing_value)
 
     return messages
+
+def is_email_valid(email):
+    if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email):
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':
