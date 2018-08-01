@@ -2,7 +2,7 @@ import unittest
 from api import app
 from api.v1.database import DatabaseConnection
 
-dbcon = DatabaseConnection()
+
 
 
 class MyTest(unittest.TestCase):
@@ -13,7 +13,7 @@ class MyTest(unittest.TestCase):
 
     def setUp(self):
         app.config['TESTING'] = True
-        # app.config.from_object('config.TestingConfig')
+        dbcon = DatabaseConnection()
         dbcon.create_entries_table()
         dbcon.create_users_table()
         self.user = [
