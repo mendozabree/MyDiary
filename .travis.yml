@@ -8,7 +8,6 @@ services:
 
 # command to install dependencies
 before_script:
-  - psql -c "create user admin with password 'diaryAdmin';" -U postgres
   - psql -c 'create database diaries_testdb;' -U postgres
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter

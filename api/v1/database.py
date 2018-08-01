@@ -18,8 +18,8 @@ class DatabaseConnection:
         try:
             if app.config['TESTING']:
                 self.connection = psycopg2.connect(
-                    "dbname='diaries_testdb' user='admin' host='localhost'"
-                    "password='diaryAdmin' port='5432'")
+                    "dbname='diaries_testdb' user='postgres' host='localhost'"
+                    "password='' port='5432'")
 
             else:
                 self.connection = psycopg2.connect(
