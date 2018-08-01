@@ -15,24 +15,24 @@ class DatabaseConnection:
         """dB connection and cursors"""
 
 
-        try:
-            if app.config['TESTING']:
-                self.connection = psycopg2.connect(
-                    "dbname='diaries_testdb' user='postgres' host='localhost'"
-                    "password='' port='5432'")
+        # try:
+        if app.config['TESTING']:
+            self.connection = psycopg2.connect(
+                "dbname='diaries_testdb' user='postgres' host='localhost'"
+                "password='' port='5432'")
 
-            else:
-                self.connection = psycopg2.connect(
-                    "dbname='diarydb' user='admin' host='localhost'"
-                    "password='diaryAdmin' port='5432'")
-            self.connection.autocommit = True
+        else:
+            self.connection = psycopg2.connect(
+                "dbname='diarydb' user='admin' host='localhost'"
+                "password='diaryAdmin' port='5432'")
+        self.connection.autocommit = True
 
-            self.cursor = self.connection.cursor()
-            self.dict_cursor = self.connection.cursor(
-                cursor_factory=psycopg2.extras.DictCursor)
+        self.cursor = self.connection.cursor()
+        self.dict_cursor = self.connection.cursor(
+            cursor_factory=psycopg2.extras.DictCursor)
 
-        except(Exception, psycopg2.DatabaseError) as error:
-            print(error)
+        # except(Exception, psycopg2.DatabaseError) as error:
+        #     print(error)
 
     def create_users_table(self):
         """Method to create user table if none existant"""
