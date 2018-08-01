@@ -12,8 +12,6 @@ class DatabaseConnection:
 
     def __init__(self):
         """dB connection and cursors"""
-
-
         # try:
         app_env = os.environ.get('app_env', None)
 

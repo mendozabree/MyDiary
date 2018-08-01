@@ -13,8 +13,9 @@ class MyTest(unittest.TestCase):
 
     def setUp(self):
         dbcon = DatabaseConnection()
-        dbcon.create_entries_table()
         dbcon.create_users_table()
+        dbcon.create_entries_table()
+
         self.user = [
             {
                 'username': 'Orange',
