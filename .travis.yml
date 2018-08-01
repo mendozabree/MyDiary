@@ -6,6 +6,9 @@ cache: pip
 services:
   - postgresql
 
+env:
+  - app_env = 'testing'
+
 # command to install dependencies
 before_script:
   - psql -c 'create database diaries_testdb;' -U postgres

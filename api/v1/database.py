@@ -4,8 +4,7 @@ import datetime
 import time
 import re
 from werkzeug.security import generate_password_hash
-
-from api import app
+import os
 
 
 class DatabaseConnection:
@@ -16,7 +15,10 @@ class DatabaseConnection:
 
 
         # try:
-        if app.config['TESTING']:
+        app_env = os.environ.get('app_env', None)
+
+        if app_env == 'testing':
+
             self.connection = psycopg2.connect(
                 "dbname='diaries_testdb' user='postgres' host='localhost'"
                 "password='' port='5432'")
@@ -25,6 +27,8 @@ class DatabaseConnection:
             self.connection = psycopg2.connect(
                 "dbname='diarydb' user='admin' host='localhost'"
                 "password='diaryAdmin' port='5432'")
+
+
         self.connection.autocommit = True
 
         self.cursor = self.connection.cursor()
