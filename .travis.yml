@@ -7,7 +7,7 @@ services:
   - postgresql
 
 env:
-  - app_env = 'testing'
+  - app_env='testing'
 
 # command to install dependencies
 before_script:
