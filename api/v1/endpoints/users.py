@@ -41,14 +41,11 @@ class Login(Resource):
         login_data = api.payload
 
         user_id = db.login_user(login_data=login_data)
-        if (isinstance(user_id, list)):
+        if (isinstance(user_id, int)):
             expires = datetime.timedelta(hours=4)
-            token = create_access_token(user_id[0], expires_delta=expires)
+            token = create_access_token(user_id, expires_delta=expires)
             return token, 200
 
-        # if (isinstance(user_id, dict)):
-        #     return user_id
-        #
         else:
             return user_id
 

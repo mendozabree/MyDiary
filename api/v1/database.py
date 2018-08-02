@@ -133,27 +133,23 @@ class User(DatabaseConnection):
         """
 
         try:
-            login_user_cmd = ("SELECT user_id,password FROM users WHERE"
-                              " username = %s")
-            self.cursor.execute(login_user_cmd, (login_data['username'],))
+            login_user_cmd = "SELECT user_id,password FROM users WHERE username = '{}'" .format(login_data['username'])
 
-        except KeyError:
-            return {"message": "Missing username or password"}
+            self.cursor.execute(login_user_cmd)
+            user = self.cursor.fetchone()
 
-        else:
-            row = self.cursor.fetchone()
-            if row:
-                pswd_check = check_password_hash(row[1], login_data['password'])
+            if user:
+                pswd_check = check_password_hash(user[1], login_data['password'])
                 if pswd_check:
-                    return row
+                    return user[0]
                 else:
-                    return {'message': 'Incorrect password'}
+                    return {'message': 'Incorrect password'}, 401
 
             else:
-                return {'message': 'Incorrect username or password'}
+                return {'message': 'Incorrect username or password'}, 401
 
-        # else:
-        #     return {'message': fields_check_result}, 400
+        except KeyError:
+            return {"message": "Missing username or password"}, 400
 
 
 class Entry(DatabaseConnection):
