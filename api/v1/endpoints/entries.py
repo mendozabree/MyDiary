@@ -29,9 +29,10 @@ def unauth():
 @api.route('/api/v1/entries')
 class NewEntry(Resource):
     """Class for making a new entry"""
-    @jwt_required
+
     # @jwt.expired_token_loader
     @api.expect(entry_creation_model)
+    @jwt_required
     def post(self):
         current_user = get_jwt_identity()
         new_entry_data = api.payload

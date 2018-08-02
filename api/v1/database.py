@@ -13,18 +13,18 @@ class DatabaseConnection:
     def __init__(self):
         """dB connection and cursors"""
 
-        app_env = os.environ.get('app_env', None)
+        # app_env = os.environ.get('app_env', None)
+        #
+        # if app_env == 'testing':
 
-        if app_env == 'testing':
+        self.connection = psycopg2.connect(
+            "dbname='diarydb' user='postgres' host='localhost'"
+            "password='#5T0uch3' port='5432'")
 
-            self.connection = psycopg2.connect(
-                "dbname='diaries_testdb' user='postgres' host='localhost'"
-                "password='' port='5432'")
-
-        else:
-            self.connection = psycopg2.connect(
-                "dbname='diarydb' user='postgres' host='localhost'"
-                "password='#5T0uch3' port='5432'")
+        # else:
+        #     self.connection = psycopg2.connect(
+        #         "dbname='diarydb' user='postgres' host='localhost'"
+        #         "password='#5T0uch3' port='5432'")
 
         self.connection.autocommit = True
 
@@ -33,7 +33,7 @@ class DatabaseConnection:
             cursor_factory=psycopg2.extras.DictCursor)
 
     def create_users_table(self):
-        """Method to create user table if none existant"""
+        """Method to create user table if none existent"""
 
         user_table_command = ("CREATE TABLE IF NOT EXISTS users"
                               "(user_id SERIAL PRIMARY KEY,"
@@ -97,7 +97,7 @@ class User(DatabaseConnection):
                 row = self.cursor.fetchone()
 
                 if row:
-                    return {'message': 'Username in use'}, 400
+                    return {'message': 'Username or email in use'}, 400
                 else:
                     new_user_command = ("INSERT INTO users"
                                         "(username,first_name,last_name,"
