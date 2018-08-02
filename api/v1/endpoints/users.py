@@ -14,6 +14,11 @@ from ..database import User
 db = User()
 
 
+@api.route('/')
+class Home(Resource):
+    def get(self):
+        return 'Welcome'
+
 @api.route('/api/v1/auth/signup')
 class Signup(Resource):
     """
