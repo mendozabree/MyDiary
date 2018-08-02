@@ -64,3 +64,5 @@ class UserTest(MyTest):
         token = json.loads(response.data.decode('utf-8').replace("'", "/"))
         self.assertEqual(response.status_code, 200)
         self.assertIn(token, str(response.data))
+
+    my_test.tearDown()

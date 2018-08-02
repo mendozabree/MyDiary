@@ -13,18 +13,18 @@ class DatabaseConnection:
     def __init__(self):
         """dB connection and cursors"""
         # try:
-        # app_env = os.environ.get('app_env', None)
-        #
-        # if app_env == 'testing':
-        #
-        #     self.connection = psycopg2.connect(
-        #         "dbname='diaries_testdb' user='postgres' host='localhost'"
-        #         "password='#5T0uch3' port='5432'")
-        #
-        # else:
-        self.connection = psycopg2.connect(
-            "dbname='diarydb' user='postgres' host='localhost'"
-            "password='#5T0uch3' port='5432'")
+        app_env = os.environ.get('app_env', None)
+
+        if app_env == 'testing':
+
+            self.connection = psycopg2.connect(
+                "dbname='diaries_testdb' user='postgres' host='localhost'"
+                "password='#5T0uch3' port='5432'")
+
+        else:
+            self.connection = psycopg2.connect(
+                "dbname='diarydb' user='postgres' host='localhost'"
+                "password='#5T0uch3' port='5432'")
 
         self.connection.autocommit = True
 
@@ -71,6 +71,7 @@ class DatabaseConnection:
     def close_connection(self):
         self.cursor.close()
         self.connection.close()
+
 
 class User(DatabaseConnection):
 
@@ -279,5 +280,6 @@ def is_email_valid(email):
 
 if __name__ == '__main__':
     db = DatabaseConnection()
+    # db.close_connection()
     db.create_users_table()
     db.create_entries_table()
