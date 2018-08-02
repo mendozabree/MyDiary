@@ -6,10 +6,6 @@ from api.v1.database import DatabaseConnection
 
 
 class MyTest(unittest.TestCase):
-    #
-    # def create_app(self):
-    #     app.config.from_object('config.TestingConfig')
-    #     return app
 
     def setUp(self):
         dbcon = DatabaseConnection()
@@ -43,8 +39,9 @@ class MyTest(unittest.TestCase):
                        'Flask is useful for designing APIs.'
         }
 
-    # def tearDown(self):
-    #     dbcon.drop_tables()
+    def tearDown(self):
+        dbcon = DatabaseConnection()
+        dbcon.drop_tables()
 
 
 if __name__ == '__main__':

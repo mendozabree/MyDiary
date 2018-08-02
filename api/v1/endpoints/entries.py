@@ -4,20 +4,33 @@ This module contains the entries endpoints
 """
 
 from flask_restplus import Resource
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required, exceptions
 
-from api import api
+from api import api, jwt
 from api.v1.serializers import entry_creation_model, entry_get_model
 from api.v1.database import Entry
 
 
 entry = Entry()
 
+@jwt.expired_token_loader
+def expired_token():
+    return {'message': 'Token expired, please login again!'}, 400
+
+@jwt.invalid_token_loader
+def invalid_token():
+    return {'message': 'Invalid token, login to generate a new one'}, 400
+
+@jwt.unauthorized_loader
+def unauth():
+    return {'message': 'You must first log in!'}, 400
+
 
 @api.route('/api/v1/entries')
 class NewEntry(Resource):
     """Class for making a new entry"""
     @jwt_required
+    # @jwt.expired_token_loader
     @api.expect(entry_creation_model)
     def post(self):
         current_user = get_jwt_identity()
@@ -47,8 +60,10 @@ class GetSpecificEntry(Resource):
     """Class for retrieving specific entry"""
     @jwt_required
     def get(self, entry_id):
+
         current_user = get_jwt_identity()
-        output = entry.get_specific(entry_id=entry_id, current_user=current_user)
+        output = entry.get_specific(entry_id=entry_id,
+                                    current_user=current_user)
         if output:
             return {'message': output}, 200
         else:
@@ -61,8 +76,15 @@ class ModifyEntry(Resource):
     @jwt_required
     @api.expect(entry_creation_model)
     def put(self, entry_id):
+
         modify_data = api.payload
         current_user = get_jwt_identity()
 
-        response = entry.modify_entry(entry_id=entry_id, modify_data=modify_data, current_user=current_user)
+        response = entry.modify_entry(entry_id=entry_id,
+                                      modify_data=modify_data,
+                                      current_user=current_user)
         return response
+
+
+
+

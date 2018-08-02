@@ -26,7 +26,6 @@ class DatabaseConnection:
                 "dbname='diarydb' user='postgres' host='localhost'"
                 "password='#5T0uch3' port='5432'")
 
-
         self.connection.autocommit = True
 
         self.cursor = self.connection.cursor()
@@ -65,9 +64,9 @@ class DatabaseConnection:
 
         self.cursor.execute(entry_table_command)
 
-    # def drop_tables(self):
-    #     drop_cmd = "DROP TABLE entries,users"
-    #     self.cursor.execute(drop_cmd)
+    def drop_tables(self):
+        drop_cmd = "DROP TABLE entries,users"
+        self.cursor.execute(drop_cmd)
 
 
 class User(DatabaseConnection):
@@ -78,7 +77,8 @@ class User(DatabaseConnection):
         :return:
         """
 
-        expected_key_list = ['username', 'first_name', 'last_name', 'email', 'password']
+        expected_key_list = ['username', 'first_name', 'last_name',
+                             'email', 'password']
 
         fields_check_result = fields_check(
                     expected_key_list=expected_key_list,
@@ -89,19 +89,21 @@ class User(DatabaseConnection):
 
             if is_email_valid(email=new_user_data['email']):
 
-                new_user_command = ("INSERT INTO users"\
-                                    "(username,first_name,last_name,email,password)"\
+                new_user_command = ("INSERT INTO users"
+                                    "(username,first_name,last_name,"
+                                    "email,password)"
                                     "VALUES (%s,%s,%s,%s,%s)")
 
-                user_password = generate_password_hash(new_user_data['password'], method='sha256')
+                user_password = generate_password_hash(new_user_data['password'],
+                                                       method='sha256')
 
-
-
-                self.cursor.execute(new_user_command, (new_user_data['username'],
-                                                       new_user_data['first_name'],
-                                                       new_user_data['last_name'],
-                                                       new_user_data['email'],
-                                                       user_password))
+                self.cursor.execute(new_user_command,
+                                    (new_user_data['username'],
+                                     new_user_data['first_name'],
+                                     new_user_data['last_name'],
+                                     new_user_data['email'],
+                                     user_password)
+                                    )
 
                 return {'message': 'User successfully registered.'}, 201
 
@@ -118,7 +120,7 @@ class User(DatabaseConnection):
         """
 
         try:
-            login_user_cmd = ("SELECT user_id FROM users WHERE"\
+            login_user_cmd = ("SELECT user_id FROM users WHERE"
                               " username = %s")
             self.cursor.execute(login_user_cmd, (login_data['username'],))
 
@@ -149,14 +151,15 @@ class Entry(DatabaseConnection):
             return {'message': fields_check_result}, 400
         else:
 
-            new_entry_cmd = ("INSERT INTO entries " \
+            new_entry_cmd = ("INSERT INTO entries " 
                              "(title,content,entry_date,entry_time,"
-                             "entry_timestamp,user_id) " \
+                             "entry_timestamp,user_id) "
                              "VALUES (%s,%s,%s,%s,%s,%s)")
 
             entry_time = datetime.datetime.now().replace(second=0,
                                                          microsecond=0).time()
             entry_timestamp = time.time()
+            
             self.cursor.execute(new_entry_cmd, (new_entry_data['title'],
                                                 new_entry_data['content'],
                                                 datetime.date.today(),
@@ -175,6 +178,9 @@ class Entry(DatabaseConnection):
 
         self.cursor.execute(all_entries_cmd, (current_user,))
         rows = self.cursor.fetchall()
+
+        for row in rows:
+            entries = {}
 
         return rows
 
@@ -242,6 +248,7 @@ def fields_check(expected_key_list, pending_data):
             messages.append(missing_value)
 
     return messages
+
 
 def is_email_valid(email):
     if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email):
