@@ -12,14 +12,14 @@ class DatabaseConnection:
 
     def __init__(self):
         """dB connection and cursors"""
-        # try:
+
         app_env = os.environ.get('app_env', None)
 
         if app_env == 'testing':
 
             self.connection = psycopg2.connect(
                 "dbname='diaries_testdb' user='postgres' host='localhost'"
-                "password='#5T0uch3' port='5432'")
+                "password='' port='5432'")
 
         else:
             self.connection = psycopg2.connect(
@@ -31,9 +31,6 @@ class DatabaseConnection:
         self.cursor = self.connection.cursor()
         self.dict_cursor = self.connection.cursor(
             cursor_factory=psycopg2.extras.DictCursor)
-
-        # except(Exception, psycopg2.DatabaseError) as error:
-        #     print(error)
 
     def create_users_table(self):
         """Method to create user table if none existant"""
