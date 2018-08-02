@@ -41,15 +41,15 @@ class Login(Resource):
         login_data = api.payload
 
         user_id = db.login_user(login_data=login_data)
-        if (isinstance(user_id, tuple)):
+        if (isinstance(user_id, list)):
             expires = datetime.timedelta(hours=4)
             token = create_access_token(user_id[0], expires_delta=expires)
             return token, 200
 
-        if (isinstance(user_id, dict)):
-            return user_id
-
+        # if (isinstance(user_id, dict)):
+        #     return user_id
+        #
         else:
-            return {'message': 'Incorrect username or password'}, 400
+            return user_id
 
 

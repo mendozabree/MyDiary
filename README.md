@@ -1,4 +1,7 @@
 # MyDiary
+[![Coverage Status](https://coveralls.io/repos/github/mendozabree/MyDiary/badge.svg)](https://coveralls.io/github/mendozabree/MyDiary)
+[![Build Status](https://travis-ci.com/mendozabree/MyDiary.svg?branch=without_tests)](https://travis-ci.com/mendozabree/MyDiary)
+[![Maintainability](https://api.codeclimate.com/v1/badges/4d73ae24b5343edbc393/maintainability)](https://codeclimate.com/github/mendozabree/MyDiary/maintainability)
 This is a web application where one can write down their thoughts , feelings. Day to Day activities, it's a personal diary.
 
 ## Getting Started

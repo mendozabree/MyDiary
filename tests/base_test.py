@@ -42,6 +42,7 @@ class MyTest(unittest.TestCase):
     def tearDown(self):
         dbcon = DatabaseConnection()
         dbcon.drop_tables()
+        dbcon.close_connection()
 
 
 if __name__ == '__main__':

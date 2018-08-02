@@ -3,7 +3,7 @@ import psycopg2.extras
 import datetime
 import time
 import re
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 
@@ -13,18 +13,18 @@ class DatabaseConnection:
     def __init__(self):
         """dB connection and cursors"""
         # try:
-        app_env = os.environ.get('app_env', None)
-
-        if app_env == 'testing':
-
-            self.connection = psycopg2.connect(
-                "dbname='diaries_testdb' user='postgres' host='localhost'"
-                "password='' port='5432'")
-
-        else:
-            self.connection = psycopg2.connect(
-                "dbname='diarydb' user='postgres' host='localhost'"
-                "password='#5T0uch3' port='5432'")
+        # app_env = os.environ.get('app_env', None)
+        #
+        # if app_env == 'testing':
+        #
+        #     self.connection = psycopg2.connect(
+        #         "dbname='diaries_testdb' user='postgres' host='localhost'"
+        #         "password='#5T0uch3' port='5432'")
+        #
+        # else:
+        self.connection = psycopg2.connect(
+            "dbname='diarydb' user='postgres' host='localhost'"
+            "password='#5T0uch3' port='5432'")
 
         self.connection.autocommit = True
 
@@ -68,6 +68,9 @@ class DatabaseConnection:
         drop_cmd = "DROP TABLE entries,users"
         self.cursor.execute(drop_cmd)
 
+    def close_connection(self):
+        self.cursor.close()
+        self.connection.close()
 
 class User(DatabaseConnection):
 
@@ -89,26 +92,35 @@ class User(DatabaseConnection):
 
             if is_email_valid(email=new_user_data['email']):
 
-                new_user_command = ("INSERT INTO users"
-                                    "(username,first_name,last_name,"
-                                    "email,password)"
-                                    "VALUES (%s,%s,%s,%s,%s)")
+                user_name_email_check = ("SELECT username,email FROM users"
+                                         " WHERE username=%s OR email=%s")
+                self.cursor.execute(user_name_email_check, (new_user_data['username'],
+                                                            new_user_data['email']))
+                row = self.cursor.fetchone()
 
-                user_password = generate_password_hash(new_user_data['password'],
-                                                       method='sha256')
+                if row:
+                    return {'message': 'Username in use'}, 400
+                else:
+                    new_user_command = ("INSERT INTO users"
+                                        "(username,first_name,last_name,"
+                                        "email,password)"
+                                        "VALUES (%s,%s,%s,%s,%s)")
 
-                self.cursor.execute(new_user_command,
-                                    (new_user_data['username'],
-                                     new_user_data['first_name'],
-                                     new_user_data['last_name'],
-                                     new_user_data['email'],
-                                     user_password)
-                                    )
+                    user_password = generate_password_hash(new_user_data['password'],
+                                                           method='sha256')
 
-                return {'message': 'User successfully registered.'}, 201
+                    self.cursor.execute(new_user_command,
+                                        (new_user_data['username'],
+                                         new_user_data['first_name'],
+                                         new_user_data['last_name'],
+                                         new_user_data['email'],
+                                         user_password)
+                                        )
+
+                    return {'message': 'User successfully registered.'}, 201
 
             else:
-                return {'message': 'Email is of wrong format'}, 400
+                    return {'message': 'Email is of wrong format'}, 400
 
         else:
             return {'message': fields_check_result}, 400
@@ -120,17 +132,25 @@ class User(DatabaseConnection):
         """
 
         try:
-            login_user_cmd = ("SELECT user_id FROM users WHERE"
+            login_user_cmd = ("SELECT user_id,password FROM users WHERE"
                               " username = %s")
             self.cursor.execute(login_user_cmd, (login_data['username'],))
-
 
         except KeyError:
             return {"message": "Missing username or password"}
 
         else:
             row = self.cursor.fetchone()
-            return row
+            if row:
+                pswd_check = check_password_hash(row[1], login_data['password'])
+                if pswd_check:
+                    return row
+                else:
+                    return {'message': 'Incorrect password'}
+
+            else:
+                return {'message': 'Incorrect username or password'}
+
         # else:
         #     return {'message': fields_check_result}, 400
 
