@@ -207,7 +207,7 @@ class Entry(DatabaseConnection):
         :return:
         """
         all_entries_cmd = ("SELECT entry_id,title,content FROM "
-                           "entries HERE user_id = %s")
+                           "entries WHERE user_id = %s")
 
         self.dict_cursor.execute(all_entries_cmd, (current_user,))
         rows = self.dict_cursor.fetchall()
