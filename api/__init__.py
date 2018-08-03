@@ -13,3 +13,4 @@ jwt._set_error_handler_callbacks(api)
 from api.v1.endpoints import users
 from api.v1.endpoints import entries
 from api.v1.endpoints import get_one_entry
+from api.v1.endpoints import modify_entry
