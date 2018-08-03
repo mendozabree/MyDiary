@@ -13,18 +13,17 @@ class DatabaseConnection:
     def __init__(self):
         """dB connection and cursors"""
 
-        # app_env = os.environ.get('app_env', None)
-        #
-        # if app_env == 'testing':
+        app_env = os.environ.get('app_env', None)
 
-        self.connection = psycopg2.connect(
-            "dbname='diarydb' user='postgres' host='localhost'"
-            "password='#5T0uch3' port='5432'")
+        if app_env == 'testing':
+            self.connection = psycopg2.connect(
+                "dbname='diaries_testdb' user='postgres' host='localhost'"
+                "password='#5T0uch3' port='5432'")
 
-        # else:
-        #     self.connection = psycopg2.connect(
-        #         "dbname='diarydb' user='postgres' host='localhost'"
-        #         "password='#5T0uch3' port='5432'")
+        else:
+            self.connection = psycopg2.connect(
+                "dbname='diarydb' user='postgres' host='localhost'"
+                "password='#5T0uch3' port='5432'")
 
         self.connection.autocommit = True
 
@@ -156,6 +155,7 @@ class Entry(DatabaseConnection):
         Method with sql command for new_entry
         :return:
         """
+
         expected_key_list = ['title', 'content']
         fields_check_result = fields_check(
             expected_key_list=expected_key_list,
@@ -164,43 +164,49 @@ class Entry(DatabaseConnection):
         if fields_check_result:
             return {'message': fields_check_result}, 400
         else:
+            title_query = "SELECT title FROM entries WHERE user_id = %s" \
+                          " AND title = %s"
+            self.cursor.execute(title_query, (current_user,
+                                              new_entry_data['title']))
+            row = self.cursor.fetchone()
 
-            new_entry_cmd = ("INSERT INTO entries " 
-                             "(title,content,entry_date,entry_time,"
-                             "entry_timestamp,user_id) "
-                             "VALUES (%s,%s,%s,%s,%s,%s)")
+            if row:
+                return 'Entry with such title exists', 400
 
-            entry_time = datetime.datetime.now().replace(second=0,
-                                                         microsecond=0).time()
-            entry_timestamp = time.time()
-            
-            self.cursor.execute(new_entry_cmd, (new_entry_data['title'],
-                                                new_entry_data['content'],
-                                                datetime.date.today(),
-                                                entry_time,
-                                                entry_timestamp,
-                                                current_user))
-            return {'message': 'Your memory has been saved!'}, 201
+            else:
+
+                new_entry_cmd = ("INSERT INTO entries "
+                                 "(title,content,entry_date,entry_time,"
+                                 "entry_timestamp,user_id) "
+                                 "VALUES (%s,%s,%s,%s,%s,%s)")
+
+                entry_time = datetime.datetime.now().replace(second=0,
+                                                             microsecond=0).time()
+                entry_timestamp = time.time()
+
+                self.cursor.execute(new_entry_cmd, (new_entry_data['title'],
+                                                    new_entry_data['content'],
+                                                    datetime.date.today(),
+                                                    entry_time,
+                                                    entry_timestamp,
+                                                    current_user))
+                return {'message': 'Your memory has been saved!'}, 201
 
     def all_entries(self, current_user):
         """
         Method with sql for getting all entries
         :return:
         """
-        all_entries_cmd = ("SELECT entry_id,title,content FROM entries "
-                           "WHERE user_id = %s")
+        all_entries_cmd = "SELECT entry_id,title,content FROM entries "\
+                           "WHERE user_id = %s"
 
-        self.cursor.execute(all_entries_cmd, (current_user,))
-        rows = self.cursor.fetchall()
-
-        for row in rows:
-            entries = {}
-
+        self.dict_cursor.execute(all_entries_cmd, (current_user,))
+        rows = self.dict_cursor.fetchall()
         return rows
 
     def get_specific(self, entry_id, current_user):
-        specific_entry_cmd = ("SELECT title,content FROM entries "
-                              "WHERE entry_id = %s AND user_id = %s")
+        specific_entry_cmd = "SELECT title,content FROM entries "\
+                              "WHERE entry_id = %s AND user_id = %s"
 
         self.cursor.execute(specific_entry_cmd, (entry_id, current_user))
         row = self.cursor.fetchone()
@@ -261,6 +267,17 @@ def fields_check(expected_key_list, pending_data):
             missing_value = 'Please fill in ' + my_key
             messages.append(missing_value)
 
+        if value == ' ':
+            empty_string = ' '
+            count = 0
+            for empty_string in value:
+                count += 1
+            if count == len(value):
+                result = 'Empty spaces are not allowed.'
+                messages.append(result)
+
+
+
     return messages
 
 
@@ -269,6 +286,15 @@ def is_email_valid(email):
         return True
     else:
         return False
+
+def white_space(pending_string):
+    empty_string = " "
+    white_spaces = 0
+    for empty_string in pending_string:
+        white_spaces += 1
+    if white_spaces == len(pending_string):
+        return 'White spaces only are not allowed.'
+
 
 
 if __name__ == '__main__':
