@@ -4,7 +4,7 @@ This module contains the User endpoints, login and signup
 """
 
 from flask_restplus import Resource
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity
 import datetime
 
 from api import api
@@ -37,9 +37,13 @@ class Login(Resource):
     @api.expect(login_model)
     def post(self):
         """Method for logging in registered user"""
+        login_status = False
 
         login_data = api.payload
 
+        # current_user = get_jwt_identity()
+        if current_user:
+            return {'message': 'User already logged in!'}, 400
         user_id = db.login_user(login_data=login_data)
         if (isinstance(user_id, int)):
             expires = datetime.timedelta(hours=4)
@@ -48,5 +52,3 @@ class Login(Resource):
 
         else:
             return user_id
-
-

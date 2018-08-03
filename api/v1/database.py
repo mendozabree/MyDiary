@@ -18,7 +18,7 @@ class DatabaseConnection:
         if app_env == 'testing':
             self.connection = psycopg2.connect(
                 "dbname='diaries_testdb' user='postgres' host='localhost'"
-                "password='#5T0uch3' port='5432'")
+                "password='' port='5432'")
 
         else:
             self.connection = psycopg2.connect(
@@ -91,8 +91,11 @@ class User(DatabaseConnection):
 
                 user_name_email_check = ("SELECT username,email FROM users"
                                          " WHERE username=%s OR email=%s")
-                self.cursor.execute(user_name_email_check, (new_user_data['username'],
-                                                            new_user_data['email']))
+                self.cursor.execute(user_name_email_check,
+                                    (new_user_data['username'],
+                                     new_user_data['email'])
+                                    )
+                                    
                 row = self.cursor.fetchone()
 
                 if row:
@@ -103,8 +106,10 @@ class User(DatabaseConnection):
                                         "email,password)"
                                         "VALUES (%s,%s,%s,%s,%s)")
 
-                    user_password = generate_password_hash(new_user_data['password'],
-                                                           method='sha256')
+                    user_password = generate_password_hash(
+                            new_user_data['password'],
+                            method='sha256'
+                                                    )
 
                     self.cursor.execute(new_user_command,
                                         (new_user_data['username'],
@@ -129,13 +134,17 @@ class User(DatabaseConnection):
         """
 
         try:
-            login_user_cmd = "SELECT user_id,password FROM users WHERE username = '{}'" .format(login_data['username'])
+            login_user_cmd = "SELECT user_id,password FROM users " \
+                             "WHERE username = '{}'" \
+                             .format(login_data['username'])
 
             self.cursor.execute(login_user_cmd)
             user = self.cursor.fetchone()
 
             if user:
-                pswd_check = check_password_hash(user[1], login_data['password'])
+                pswd_check = check_password_hash(user[1],
+                                                 login_data['password'])
+
                 if pswd_check:
                     return user[0]
                 else:
@@ -180,8 +189,8 @@ class Entry(DatabaseConnection):
                                  "entry_timestamp,user_id) "
                                  "VALUES (%s,%s,%s,%s,%s,%s)")
 
-                entry_time = datetime.datetime.now().replace(second=0,
-                                                             microsecond=0).time()
+                entry_time = datetime.datetime.now().replace(
+                            second=0, microsecond=0).time()
                 entry_timestamp = time.time()
 
                 self.cursor.execute(new_entry_cmd, (new_entry_data['title'],
@@ -197,8 +206,8 @@ class Entry(DatabaseConnection):
         Method with sql for getting all entries
         :return:
         """
-        all_entries_cmd = "SELECT entry_id,title,content FROM entries "\
-                           "WHERE user_id = %s"
+        all_entries_cmd = ("SELECT entry_id,title,content FROM "
+                           "entries HERE user_id = %s")
 
         self.dict_cursor.execute(all_entries_cmd, (current_user,))
         rows = self.dict_cursor.fetchall()
@@ -276,8 +285,6 @@ def fields_check(expected_key_list, pending_data):
                 result = 'Empty spaces are not allowed.'
                 messages.append(result)
 
-
-
     return messages
 
 
@@ -287,18 +294,8 @@ def is_email_valid(email):
     else:
         return False
 
-def white_space(pending_string):
-    empty_string = " "
-    white_spaces = 0
-    for empty_string in pending_string:
-        white_spaces += 1
-    if white_spaces == len(pending_string):
-        return 'White spaces only are not allowed.'
-
-
 
 if __name__ == '__main__':
     db = DatabaseConnection()
-    # db.close_connection()
     db.create_users_table()
     db.create_entries_table()

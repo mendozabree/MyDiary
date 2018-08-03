@@ -1,8 +1,5 @@
 import unittest
-from api import app
 from api.v1.database import DatabaseConnection
-
-
 
 
 class MyTest(unittest.TestCase):
