@@ -3,7 +3,7 @@ from flask_restplus import fields
 from api import api
 
 
-user_creation_model = api.model('Create_User', {
+user_creation_model = api.model('Create_My_User', {
     'username': fields.String('Your user name', description='username'),
     'first_name': fields.String('Your first name', description='User first name'),
     'last_name': fields.String('Your last name', description='User last name'),
@@ -25,4 +25,9 @@ entry_get_model = api.model('Get_all_Entries', {
     'content': fields.String('Your content', description='Entry content'),
     'entry_date': fields.String('Your entry date', description='Entry date'),
     'entry_time': fields.String('Your entry time', description='Entry time')
+})
+
+specific_entry = api.model('Get specific Entry', {
+    'title': fields.String('Your title', description='Entry title'),
+    'content': fields.String('Your content', description='Entry content'),
 })

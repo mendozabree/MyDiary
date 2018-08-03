@@ -1,7 +1,6 @@
 import json
 
 from api import app
-# from api.v1.database import DatabaseConnection
 from .base_test import MyTest
 
 

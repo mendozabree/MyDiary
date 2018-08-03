@@ -4,36 +4,25 @@ This module contains the entries endpoints
 """
 
 from flask_restplus import Resource
-from flask_jwt_extended import get_jwt_identity, jwt_required, exceptions
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
-from api import api, jwt
-from api.v1.serializers import entry_creation_model, entry_get_model
+from api import api
+from api.v1.serializers import entry_creation_model, specific_entry
 from api.v1.database import Entry
 
 
 entry = Entry()
-
-@jwt.expired_token_loader
-def expired_token():
-    return {'message': 'Token expired, please login again!'}, 400
-
-@jwt.invalid_token_loader
-def invalid_token():
-    return {'message': 'Invalid token, login to generate a new one'}, 400
-
-@jwt.unauthorized_loader
-def unauth():
-    return {'message': 'You must first log in!'}, 400
 
 
 @api.route('/api/v1/entries')
 class NewEntry(Resource):
     """Class for making a new entry"""
 
-    # @jwt.expired_token_loader
     @api.expect(entry_creation_model)
     @jwt_required
     def post(self):
+        """Method to make new entry"""
+
         current_user = get_jwt_identity()
         new_entry_data = api.payload
 
@@ -49,6 +38,7 @@ class RetrieveAll(Resource):
     """Class for retrieving all user entries"""
     @jwt_required
     def get(self):
+        """Method to get all entries"""
         current_user = get_jwt_identity()
 
         my_entries = entry.all_entries(current_user=current_user)
@@ -61,11 +51,12 @@ class GetSpecificEntry(Resource):
     """Class for retrieving specific entry"""
     @jwt_required
     def get(self, entry_id):
-
+        """Method to get specific entry"""
         current_user = get_jwt_identity()
         output = entry.get_specific(entry_id=entry_id,
                                     current_user=current_user)
         if output:
+
             return {'message': output}, 200
         else:
             return {'message': 'No entry found, check id'}, 404
@@ -74,10 +65,11 @@ class GetSpecificEntry(Resource):
 @api.route('/api/v1/entries/<int:entry_id>')
 class ModifyEntry(Resource):
     """Class to modify all entries"""
-    @jwt_required
-    @api.expect(entry_creation_model)
-    def put(self, entry_id):
 
+    @api.expect(entry_creation_model)
+    @jwt_required
+    def put(self, entry_id):
+        """Method to update an entry"""
         modify_data = api.payload
         current_user = get_jwt_identity()
 
@@ -85,7 +77,3 @@ class ModifyEntry(Resource):
                                       modify_data=modify_data,
                                       current_user=current_user)
         return response
-
-
-
-
