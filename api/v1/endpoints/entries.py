@@ -44,20 +44,3 @@ class RetrieveAll(Resource):
         my_entries = entry.all_entries(current_user=current_user)
 
         return {'message': my_entries}, 200
-
-
-@api.route('/api/v1/entries/<int:entry_id>')
-class ModifyEntry(Resource):
-    """Class to modify all entries"""
-
-    @api.expect(entry_creation_model)
-    @jwt_required
-    def put(self, entry_id):
-        """Method to update an entry"""
-        modify_data = api.payload
-        current_user = get_jwt_identity()
-
-        response = entry.modify_entry(entry_id=entry_id,
-                                      modify_data=modify_data,
-                                      current_user=current_user)
-        return response
