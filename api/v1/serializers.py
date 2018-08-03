@@ -31,3 +31,8 @@ specific_entry = api.model('Get specific Entry', {
     'title': fields.String('Your title', description='Entry title'),
     'content': fields.String('Your content', description='Entry content'),
 })
+
+modify_entry = api.model('Modify_Entry', {
+    'title': fields.String('Your title', description='Entry title'),
+    'content': fields.String('Your content', description='Entry content')
+})

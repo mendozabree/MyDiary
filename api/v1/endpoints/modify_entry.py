@@ -2,7 +2,7 @@ from flask_restplus import Resource
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from api import api
-from api.v1.serializers import entry_creation_model
+from api.v1.serializers import modify_entry
 from api.v1.database import Entry
 
 
@@ -13,7 +13,7 @@ entry = Entry()
 class ModifyEntry(Resource):
     """Class to modify all entries"""
 
-    @api.expect(entry_creation_model)
+    @api.expect(modify_entry)
     @jwt_required
     def put(self, entry_id):
         """Method to update an entry"""

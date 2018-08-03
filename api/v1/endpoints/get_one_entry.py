@@ -2,7 +2,7 @@ from flask_restplus import Resource
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from api import api
-from api.v1.serializers import entry_creation_model, specific_entry
+from api.v1.serializers import specific_entry
 from api.v1.database import Entry
 
 entry = Entry()
@@ -11,6 +11,8 @@ entry = Entry()
 @api.route('/api/v1/entries/<int:entry_id>')
 class GetSpecificEntry(Resource):
     """Class for retrieving specific entry"""
+
+    @api.expect(specific_entry)
     @jwt_required
     def get(self, entry_id):
         """Method to get specific entry"""
