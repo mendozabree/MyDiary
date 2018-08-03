@@ -8,6 +8,7 @@ from api.v1.database import Entry
 
 entry = Entry()
 
+authorizations = {'Authorization': 'Bearer {}'}
 
 @api.route('/api/v1/entries/<int:entry_id>')
 class ModifyEntry(Resource):
