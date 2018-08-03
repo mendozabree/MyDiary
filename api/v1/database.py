@@ -277,13 +277,8 @@ def fields_check(expected_key_list, pending_data):
             messages.append(missing_value)
 
         if value == ' ':
-            empty_string = ' '
-            count = 0
-            for empty_string in value:
-                count += 1
-            if count == len(value):
-                result = 'Empty spaces are not allowed.'
-                messages.append(result)
+            result = 'Empty spaces are not allowed.'
+            messages.append(result)
 
     return messages
 
