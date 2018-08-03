@@ -17,22 +17,22 @@ class DatabaseConnection:
         #
         # if app_env == 'testing':
         #
-        # self.connection = psycopg2.connect(
-        #     "dbname='dbf552o4a098c6'"
-        #     " user='gdcyevpibngtki' "
-        #     "host='ec2-23-23-243-111.compute-1.amazonaws.com'"
-        #     "password='fa34422c2f3979045fc67c7fe87eb50f3b869a3fe11873ee02c0d49c898648dd' "
-        #     "port='5432'")
+        self.connection = psycopg2.connect(
+            "dbname='dbf552o4a098c6'"
+            " user='gdcyevpibngtki' "
+            "host='ec2-23-23-243-111.compute-1.amazonaws.com'"
+            "password='fa34422c2f3979045fc67c7fe87eb50f3b869a3fe11873ee02c0d49c898648dd' "
+            "port='5432'")
 
         # else:
         #     self.connection = psycopg2.connect(
         #         "dbname='diarydb' user='postgres' host='localhost'"
         #         "password='#5T0uch3' port='5432'")
 
-        self.connection = psycopg2.connect(
-            "dbname='diarydb' user='postgres' host='localhost'"
-            "password='#5T0uch3' port='5432'"
-        )
+        # self.connection = psycopg2.connect(
+        #     "dbname='diarydb' user='postgres' host='localhost'"
+        #     "password='#5T0uch3' port='5432'"
+        # )
 
         self.connection.autocommit = True
 
