@@ -44,9 +44,8 @@ class UserTest(MyTest):
         response = test_user.post('/api/v1/auth/login',
                                   data=json.dumps(self.user[0]),
                                   content_type='application/json')
-        token = json.loads(response.data.decode('utf-8').replace("'", "/"))
         self.assertEqual(response.status_code, 401)
-        self.assertIn('Incorrect username or password', str(response.data))
+        self.assertIn('Incorrect username', str(response.data))
 
     def test_API_can_login_user(self):
         test_user = app.test_client(self)
@@ -60,6 +59,6 @@ class UserTest(MyTest):
         response = test_user.post('/api/v1/auth/login',
                                   data=json.dumps(self.user[0]),
                                   content_type='application/json')
-        token = json.loads(response.data.decode('utf-8').replace("'", "/"))
+        token = json.loads(response.data.decode())["token"]
         self.assertEqual(response.status_code, 200)
         self.assertIn(token, str(response.data))
