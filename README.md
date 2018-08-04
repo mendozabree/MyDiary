@@ -89,3 +89,4 @@ These are the endpoints to test
 
 ## Deployment sites
 The user interfaces are hosted at https://mendozabree.github.io/My-Diary/UI/index.html
+A working demo of the application can be found at https://mydiary-cha3.herokuapp.com/
