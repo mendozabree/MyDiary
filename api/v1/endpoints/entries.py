@@ -9,9 +9,11 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from api import api
 from api.v1.serializers import entry_creation_model, specific_entry, entry_get_model
 from api.v1.database import Entry
+from .users import authorizations
 
 
 entry = Entry()
+api.authorizations = authorizations
 
 
 @api.route('/api/v1/entries')
@@ -19,6 +21,7 @@ class NewEntry(Resource):
     """Class for making a new entry"""
 
     @api.expect(entry_creation_model)
+    @api.doc('api_key')
     @jwt_required
     def post(self):
         """Method to make new entry"""
@@ -33,6 +36,7 @@ class NewEntry(Resource):
         return result
 
     @jwt_required
+    @api.doc('api_key')
     def get(self):
         """Method to get all entries"""
         current_user = get_jwt_identity()

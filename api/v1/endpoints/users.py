@@ -13,6 +13,11 @@ from ..database import User
 
 db = User()
 
+authorizations = {'api_key': {
+    'type': 'apiKey',
+    'in': 'header',
+    'name': 'token'
+}}
 
 @api.route('/api/v1/auth/signup')
 class Signup(Resource):

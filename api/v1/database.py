@@ -18,7 +18,7 @@ class DatabaseConnection:
         if app_env == 'testing':
             self.connection = psycopg2.connect(
                 "dbname='diaries_testdb' user='postgres' host='localhost'"
-                "password='' port='5432'")
+                "password='#5T0uch3' port='5432'")
 
         else:
             self.connection = psycopg2.connect(
