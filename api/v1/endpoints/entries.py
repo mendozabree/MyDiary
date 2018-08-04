@@ -32,7 +32,6 @@ class NewEntry(Resource):
 
         return result
 
-    @api.marshal_with(entry_get_model)
     @jwt_required
     def get(self):
         """Method to get all entries"""
@@ -47,7 +46,6 @@ class NewEntry(Resource):
 class GetSpecificEntry(Resource):
     """Class for retrieving specific entry"""
 
-    @api.marshal_with(specific_entry, envelope='resource')
     @jwt_required
     def get(self, entry_id):
         """Method to get specific entry"""
