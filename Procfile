@@ -1,2 +1,2 @@
 web: gunicorn --workers=1 run:app
-release: python database.py db upgrade
+release: python api/v1/database.py db upgrade
