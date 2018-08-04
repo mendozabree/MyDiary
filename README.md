@@ -38,7 +38,7 @@ These are instructions for setting up MyDiary app in a development environment.
 
 * Clone the project repo
   ```
-  $ git clone https://github.com/mendozabree/My-Diary.git
+  $ git clone https://github.com/mendozabree/MyDiary.git
   ```
 
 
@@ -70,7 +70,7 @@ These are the endpoints to test
 | POST | /api/v1/entries      | Create a new entry |
 | PUT      | /api/v1/entries/id      | Modify a specific entry using an id |
 
-## Running the tests with covergae
+## Running the tests with coverage
 * Install nosetests and coverage
   ```
   $ pip install nose coverage
