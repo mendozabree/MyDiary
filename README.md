@@ -62,16 +62,6 @@ This site should now be running at http://localhost:5000
 
 These are the endpoints to test
 
-![| METHOD       | Endpoint           | Description  |
-| ------------- |:-------------:| -----|
-| POST      | /api/v1/auth/signup | Signup a new user |
-| GET      | /api/v1/auth/login | Login a user |
-| GET      | /api/v1/entries | Get all entries |
-| GET      | /api/v1/entries/id      | Get specific entry using an id |
-| POST | /api/v1/entries      | Create a new entry |
-| PUT      | /api/v1/entries/id      | Modify a specific entry using an id |]
-
-
 <img style="float:left" src="https://github.com/mendozabree/MyDiary/blob/without_tests/endpoints.PNG" />
 
 ## Running the tests with coverage
@@ -88,4 +78,5 @@ These are the endpoints to test
 
 ## Deployment sites
 The user interfaces are hosted at https://mendozabree.github.io/My-Diary/UI/index.html
+
 A working demo of the application can be found at https://mydiary-cha3.herokuapp.com/
