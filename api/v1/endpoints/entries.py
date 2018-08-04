@@ -21,7 +21,7 @@ class NewEntry(Resource):
     """Class for making a new entry"""
 
     @api.expect(entry_creation_model)
-    @api.doc('api_key')
+    @api.doc(security='api_key')
     @jwt_required
     def post(self):
         """Method to make new entry"""
@@ -36,14 +36,14 @@ class NewEntry(Resource):
         return result
 
     @jwt_required
-    @api.doc('api_key')
+    @api.doc(security='api_key')
     def get(self):
         """Method to get all entries"""
         current_user = get_jwt_identity()
 
         my_entries = entry.all_entries(current_user=current_user)
 
-        return {'message': my_entries}, 200
+        return my_entries, 200
 
 
 @api.route('/api/v1/entries/<int:entry_id>')
@@ -56,11 +56,7 @@ class GetSpecificEntry(Resource):
         current_user = get_jwt_identity()
         output = entry.get_specific(entry_id=entry_id,
                                     current_user=current_user)
-        if output:
-
-            return {'message': output}, 200
-        else:
-            return {'message': 'No entry found, check id'}, 404
+        return output
 
     @api.expect(entry_creation_model)
     @jwt_required

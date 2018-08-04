@@ -16,7 +16,7 @@ db = User()
 authorizations = {'api_key': {
     'type': 'apiKey',
     'in': 'header',
-    'name': 'token'
+    'name': 'Bearer'
 }}
 
 @api.route('/api/v1/auth/signup')
@@ -45,11 +45,16 @@ class Login(Resource):
 
         login_data = api.payload
 
-        user_id = db.login_user(login_data=login_data)
-        if (isinstance(user_id, int)):
+        result = db.login_user(login_data=login_data)
+        if (isinstance(result, int)):
             expires = datetime.timedelta(hours=4)
-            token = create_access_token(user_id, expires_delta=expires)
-            return token, 200
+            token = create_access_token(result, expires_delta=expires)
+            success = dict()
+            success['status'] = 'Success'
+            success['message'] = 'Welcome, to your diary {}!'.format(
+                login_data['username'])
+            success['token'] = token
+            return success, 200
 
         else:
-            return user_id
+            return result

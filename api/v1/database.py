@@ -18,7 +18,7 @@ class DatabaseConnection:
         if app_env == 'testing':
             self.connection = psycopg2.connect(
                 "dbname='diaries_testdb' user='postgres' host='localhost'"
-                "password='#5T0uch3' port='5432'")
+                "password='' port='5432'")
 
         else:
             self.connection = psycopg2.connect(
@@ -122,10 +122,17 @@ class User(DatabaseConnection):
                     return {'message': 'User successfully registered.'}, 201
 
             else:
-                    return {'message': 'Email is of wrong format'}, 400
+                email_error = dict()
+                email_error['status'] = 'Fail'
+                email_error['message'] = 'Email is of wrong format'
+                email_error['help'] = 'Format must be someone@example.com'
+                return {'message': email_error}, 400
 
         else:
-            return {'message': fields_check_result}, 400
+            field_fails = dict()
+            field_fails['status'] = 'Fail'
+            field_fails['message'] = fields_check_result
+            return {'message': field_fails}, 400
 
     def login_user(self, login_data):
         """
@@ -148,13 +155,25 @@ class User(DatabaseConnection):
                 if pswd_check:
                     return user[0]
                 else:
-                    return {'message': 'Incorrect password'}, 401
+                    pswd_result = dict()
+                    pswd_result['status'] = 'Fail'
+                    pswd_result['message'] = 'Incorrect password'
+                    pswd_result['help'] = 'Enter correct password'
+                    return {'message': pswd_result}, 401
 
             else:
-                return {'message': 'Incorrect username or password'}, 401
+                user_result = dict()
+                user_result['status'] = 'Fail'
+                user_result['message'] = 'Incorrect username'
+                user_result['help'] = 'Enter correct username'
+                return {'message': user_result}, 401
 
         except KeyError:
-            return {"message": "Missing username or password"}, 400
+            key_err_result = dict()
+            key_err_result['status'] = 'Fail'
+            key_err_result['message'] = 'Missing username or password'
+            key_err_result['help'] = 'Please fill in missing field'
+            return {"message": key_err_result}, 400
 
 
 class Entry(DatabaseConnection):
@@ -180,7 +199,11 @@ class Entry(DatabaseConnection):
             row = self.cursor.fetchone()
 
             if row:
-                return 'Entry with such title exists', 400
+                title_error = dict()
+                title_error['status'] = 'Fail'
+                title_error['message'] = 'Entry with such title exists'
+                title_error['help'] = 'Think of a different title'
+                return title_error, 400
 
             else:
 
@@ -199,7 +222,15 @@ class Entry(DatabaseConnection):
                                                     entry_time,
                                                     entry_timestamp,
                                                     current_user))
-                return {'message': 'Your memory has been saved!'}, 201
+                success_msg = dict()
+                memory = dict()
+                success_msg['status'] = 'Success'
+                success_msg['message'] = 'Your memory entitled {} has been saved!'.format(
+                    new_entry_data['title'])
+                success_msg['your entry'] = memory
+                memory['title'] = new_entry_data['title']
+                memory['content'] = new_entry_data['content']
+                return {'message': success_msg}, 201
 
     def all_entries(self, current_user):
         """
@@ -211,7 +242,22 @@ class Entry(DatabaseConnection):
 
         self.dict_cursor.execute(all_entries_cmd, (current_user,))
         rows = self.dict_cursor.fetchall()
-        return rows
+
+        entry = dict()
+        all_entries = []
+
+        for row in rows:
+        # for value in row:
+            entry['id'] = row[0]
+            entry['title'] = row[1]
+            entry['content'] = row[2]
+
+            all_entries.append(entry)
+        return all_entries
+        # for row in rows:
+        #     my_row = row
+        #     for value in row:
+        #         return r
 
     def get_specific(self, entry_id, current_user):
         specific_entry_cmd = "SELECT title,content FROM entries "\
@@ -220,7 +266,20 @@ class Entry(DatabaseConnection):
         self.cursor.execute(specific_entry_cmd, (entry_id, current_user))
         row = self.cursor.fetchone()
 
-        return row
+        if row:
+            success_msg = dict()
+            entry = {}
+            success_msg['status'] = 'Success'
+            success_msg['entry'] = entry
+            entry['title'] = row[0]
+            entry['content'] =row[1]
+            return {'message': success_msg}, 200
+        else:
+            error_msg = dict()
+            error_msg['status'] = 'Fail'
+            error_msg['message'] = 'No entry found'
+            error_msg['help'] = 'Enter a different id'
+            return {'message': error_msg}, 404
 
     def modify_entry(self, entry_id, modify_data, current_user):
 
