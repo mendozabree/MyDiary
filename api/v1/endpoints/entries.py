@@ -7,7 +7,7 @@ from flask_restplus import Resource
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from api import api
-from api.v1.serializers import entry_creation_model, specific_entry
+from api.v1.serializers import entry_creation_model, specific_entry, entry_get_model
 from api.v1.database import Entry
 
 
@@ -32,10 +32,7 @@ class NewEntry(Resource):
 
         return result
 
-
-@api.route('/api/v1/entries')
-class RetrieveAll(Resource):
-    """Class for retrieving all user entries"""
+    @api.marshal_with(entry_get_model)
     @jwt_required
     def get(self):
         """Method to get all entries"""
@@ -62,11 +59,6 @@ class GetSpecificEntry(Resource):
             return {'message': output}, 200
         else:
             return {'message': 'No entry found, check id'}, 404
-
-
-@api.route('/api/v1/entries/<int:entry_id>')
-class ModifyEntry(Resource):
-    """Class to modify all entries"""
 
     @api.expect(entry_creation_model)
     @jwt_required

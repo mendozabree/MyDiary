@@ -250,7 +250,7 @@ class Entry(DatabaseConnection):
                 self.cursor.execute(modify_cmd, (modify_data['title'],
                                                  modify_data['content'],
                                                  current_user))
-                return {'message': 'Updated your entry.'}, 2
+                return {'message': 'Updated your entry.'}, 200
 
 
 def fields_check(expected_key_list, pending_data):
