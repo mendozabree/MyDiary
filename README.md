@@ -61,6 +61,7 @@ These are instructions for setting up MyDiary app in a development environment.
 This site should now be running at http://localhost:5000
 
 These are the endpoints to test
+
 ![| METHOD       | Endpoint           | Description  |
 | ------------- |:-------------:| -----|
 | POST      | /api/v1/auth/signup | Signup a new user |
@@ -69,6 +70,8 @@ These are the endpoints to test
 | GET      | /api/v1/entries/id      | Get specific entry using an id |
 | POST | /api/v1/entries      | Create a new entry |
 | PUT      | /api/v1/entries/id      | Modify a specific entry using an id |]
+
+
 <img style="float:left" src="https://github.com/mendozabree/MyDiary/blob/without_tests/endpoints.PNG" />
 
 ## Running the tests with coverage
