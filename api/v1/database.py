@@ -86,8 +86,11 @@ class User(DatabaseConnection):
 
                 user_name_email_check = ("SELECT username,email FROM users"
                                          " WHERE username=%s OR email=%s")
-                self.cursor.execute(user_name_email_check, (new_user_data['username'],
-                                                            new_user_data['email']))
+                self.cursor.execute(user_name_email_check,
+                                    (new_user_data['username'],
+                                     new_user_data['email'])
+                                    )
+
                 row = self.cursor.fetchone()
 
                 if row:
@@ -98,8 +101,10 @@ class User(DatabaseConnection):
                                         "email,password)"
                                         "VALUES (%s,%s,%s,%s,%s)")
 
-                    user_password = generate_password_hash(new_user_data['password'],
-                                                           method='sha256')
+                    user_password = generate_password_hash(
+                            new_user_data['password'],
+                            method='sha256'
+                                                    )
 
                     self.cursor.execute(new_user_command,
                                         (new_user_data['username'],
@@ -124,13 +129,17 @@ class User(DatabaseConnection):
         """
 
         try:
-            login_user_cmd = "SELECT user_id,password FROM users WHERE username = '{}'" .format(login_data['username'])
+            login_user_cmd = "SELECT user_id,password FROM users " \
+                             "WHERE username = '{}'" \
+                             .format(login_data['username'])
 
             self.cursor.execute(login_user_cmd)
             user = self.cursor.fetchone()
 
             if user:
-                pswd_check = check_password_hash(user[1], login_data['password'])
+                pswd_check = check_password_hash(user[1],
+                                                 login_data['password'])
+
                 if pswd_check:
                     return user[0]
                 else:
@@ -150,6 +159,7 @@ class Entry(DatabaseConnection):
         Method with sql command for new_entry
         :return:
         """
+
         expected_key_list = ['title', 'content']
         fields_check_result = fields_check(
             expected_key_list=expected_key_list,
@@ -174,8 +184,8 @@ class Entry(DatabaseConnection):
                                  "entry_timestamp,user_id) "
                                  "VALUES (%s,%s,%s,%s,%s,%s)")
 
-                entry_time = datetime.datetime.now().replace(second=0,
-                                                             microsecond=0).time()
+                entry_time = datetime.datetime.now().replace(
+                            second=0, microsecond=0).time()
                 entry_timestamp = time.time()
 
                 self.cursor.execute(new_entry_cmd, (new_entry_data['title'],
@@ -191,17 +201,16 @@ class Entry(DatabaseConnection):
         Method with sql for getting all entries
         :return:
         """
-        all_entries_cmd = "SELECT entry_id,title,content FROM entries "\
-                           "WHERE user_id = %s"
+        all_entries_cmd = ("SELECT entry_id,title,content FROM "
+                           "entries WHERE user_id = %s")
 
-        self.cursor.execute(all_entries_cmd, (current_user,))
-        rows = self.cursor.fetchall()
-
+        self.dict_cursor.execute(all_entries_cmd, (current_user,))
+        rows = self.dict_cursor.fetchall()
         return rows
 
     def get_specific(self, entry_id, current_user):
-        specific_entry_cmd = ("SELECT title,content FROM entries "
-                              "WHERE entry_id = %s AND user_id = %s")
+        specific_entry_cmd = "SELECT title,content FROM entries "\
+                              "WHERE entry_id = %s AND user_id = %s"
 
         self.cursor.execute(specific_entry_cmd, (entry_id, current_user))
         row = self.cursor.fetchone()
@@ -236,7 +245,7 @@ class Entry(DatabaseConnection):
                 self.cursor.execute(modify_cmd, (modify_data['title'],
                                                  modify_data['content'],
                                                  current_user))
-                return {'message': 'Updated your entry.'}, 2
+                return {'message': 'Updated your entry.'}, 200
 
 
 def fields_check(expected_key_list, pending_data):
@@ -263,13 +272,8 @@ def fields_check(expected_key_list, pending_data):
             messages.append(missing_value)
 
         if value == ' ':
-            empty_string = ' '
-            count = 0
-            for empty_string in value:
-                count += 1
-            if count == len(value):
-                result = 'Empty spaces are not allowed.'
-                messages.append(result)
+            result = 'Empty spaces are not allowed.'
+            messages.append(result)
 
     return messages
 
@@ -283,6 +287,5 @@ def is_email_valid(email):
 
 if __name__ == '__main__':
     db = DatabaseConnection()
-    # db.close_connection()
     db.create_users_table()
     db.create_entries_table()
