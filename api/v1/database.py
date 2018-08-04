@@ -243,21 +243,15 @@ class Entry(DatabaseConnection):
         self.dict_cursor.execute(all_entries_cmd, (current_user,))
         rows = self.dict_cursor.fetchall()
 
-        entry = dict()
-        all_entries = []
-
-        for row in rows:
-        # for value in row:
-            entry['id'] = row[0]
-            entry['title'] = row[1]
-            entry['content'] = row[2]
-
-            all_entries.append(entry)
-        return all_entries
+        # entry = dict()
+        # all_entries = []
+        #
         # for row in rows:
-        #     my_row = row
-        #     for value in row:
-        #         return r
+        #     entry['Entry id'] = row[1]
+        #     entry['title'] = entry[2]
+        #     entry['content'] = entry[3]
+        #     all_entries.append(entry)
+        return rows
 
     def get_specific(self, entry_id, current_user):
         specific_entry_cmd = "SELECT title,content FROM entries "\
