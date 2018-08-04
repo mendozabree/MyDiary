@@ -48,11 +48,6 @@ These are instructions for setting up MyDiary app in a development environment.
   $ pip install -r myDiary/requirements.txt
   ```
 
-* Setup environment variables
-  ```
-  $ set app_env=testing
-  ```
-
 * Create database and it's tables
   ```
   $ python database.py
@@ -76,10 +71,11 @@ These are the endpoints to test
 | POST | /api/v1/entries      | Create a new entry |
 | PUT      | /api/v1/entries/id      | Modify a specific entry using an id |
 
-## Running the tests with covergae
-* Install nosetests and coverage
+## Running the tests with coverage
+
+* Setup environment variables
   ```
-  $ pip install nose coverage
+  $ set app_env=testing
   ```
 
 * Running the tests
