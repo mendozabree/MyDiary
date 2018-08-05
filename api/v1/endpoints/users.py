@@ -19,6 +19,8 @@ authorizations = {'api_key': {
     'name': 'Bearer'
 }}
 
+# authorizations = {'Authorization': 'Bearer {}'.format(token)}
+
 @api.route('/api/v1/auth/signup')
 class Signup(Resource):
     """

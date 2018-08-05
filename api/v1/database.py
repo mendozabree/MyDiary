@@ -99,7 +99,10 @@ class User(DatabaseConnection):
                 row = self.cursor.fetchone()
 
                 if row:
-                    return {'message': 'Username or email in use'}, 400
+                    fields_result = dict()
+                    fields_result['status'] = 'Fail'
+                    fields_result['message'] = 'Username or email in use'
+                    return {'message': fields_result}, 400
                 else:
                     new_user_command = ("INSERT INTO users"
                                         "(username,first_name,last_name,"
@@ -119,7 +122,11 @@ class User(DatabaseConnection):
                                          user_password)
                                         )
 
-                    return {'message': 'User successfully registered.'}, 201
+                    success_msg = dict()
+                    success_msg['status'] = 'Success'
+                    success_msg['message'] = 'User successfully registered.'
+
+                    return {'message': success_msg}, 201
 
             else:
                 email_error = dict()
@@ -159,14 +166,14 @@ class User(DatabaseConnection):
                     pswd_result['status'] = 'Fail'
                     pswd_result['message'] = 'Incorrect password'
                     pswd_result['help'] = 'Enter correct password'
-                    return {'message': pswd_result}, 401
+                    return {'message': pswd_result}, 400
 
             else:
                 user_result = dict()
                 user_result['status'] = 'Fail'
                 user_result['message'] = 'Incorrect username'
                 user_result['help'] = 'Enter correct username'
-                return {'message': user_result}, 401
+                return {'message': user_result}, 400
 
         except KeyError:
             key_err_result = dict()
@@ -190,7 +197,10 @@ class Entry(DatabaseConnection):
             pending_data=new_entry_data)
 
         if fields_check_result:
-            return {'message': fields_check_result}, 400
+            field_result = dict()
+            field_result['status'] = 'Fail'
+            field_result['message'] = fields_check_result
+            return {'message': field_result}, 400
         else:
             title_query = "SELECT title FROM entries WHERE user_id = %s" \
                           " AND title = %s"
@@ -242,8 +252,16 @@ class Entry(DatabaseConnection):
 
         self.dict_cursor.execute(all_entries_cmd, (current_user,))
         rows = self.dict_cursor.fetchall()
-
-        return rows
+        if len(rows) == 0:
+            empty_msg = dict()
+            empty_msg['status'] = 'Success'
+            empty_msg['message'] = 'You have no entries yet!'
+            return empty_msg
+        else:
+            success_msg = dict()
+            success_msg['status'] = 'Success'
+            success_msg['message'] = rows
+            return success_msg
 
     def get_specific(self, entry_id, current_user):
         specific_entry_cmd = "SELECT title,content FROM entries "\
@@ -275,7 +293,10 @@ class Entry(DatabaseConnection):
             expected_key_list=expected_key_list,
             pending_data=modify_data)
         if fields_check_result:
-            return {'messages': fields_check_result}, 400
+            field_result = dict()
+            field_result['status'] = 'Fail'
+            field_result['message'] = fields_check_result
+            return {'message': field_result}, 400
         else:
             entry_time_cmd = ("SELECT entry_timestamp FROM entries WHERE "
                               "entry_id=%s AND user_id=%s")
@@ -288,14 +309,20 @@ class Entry(DatabaseConnection):
             time_diff = current_time - creation_timestamp
 
             if time_diff > 84600.0:
-                return 'Sorry, you can no longer edit this entry.'
+                time_expired = dict()
+                time_expired['status'] = 'Fail'
+                time_expired['message'] = 'Sorry, you can no longer edit this entry.'
+                return {'message': time_expired}, 400
             else:
                 modify_cmd = ("UPDATE entries SET title=%s,content=%s "
                               "WHERE user_id=%s")
                 self.cursor.execute(modify_cmd, (modify_data['title'],
                                                  modify_data['content'],
                                                  current_user))
-                return {'message': 'Updated your entry.'}, 200
+                success_msg = dict()
+                success_msg['status'] = "Success"
+                success_msg['message'] = 'Updated your entry.'
+                return {'message': success_msg}, 200
 
 
 def fields_check(expected_key_list, pending_data):
