@@ -20,6 +20,8 @@ coverage.xml
 # Environments
 env/
 venv/
+node_modules/
+
 
 # mypy
 .mypy_cache/
