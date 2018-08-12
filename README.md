@@ -1,7 +1,8 @@
 # MyDiary
-[![Coverage Status](https://coveralls.io/repos/github/mendozabree/MyDiary/badge.svg)](https://coveralls.io/github/mendozabree/MyDiary)
+[![Coverage Status](https://coveralls.io/repos/github/mendozabree/MyDiary/badge.svg?branch=without_tests)](https://coveralls.io/github/mendozabree/MyDiary?branch=without_tests)
 [![Build Status](https://travis-ci.com/mendozabree/MyDiary.svg?branch=without_tests)](https://travis-ci.com/mendozabree/MyDiary)
 [![Maintainability](https://api.codeclimate.com/v1/badges/4d73ae24b5343edbc393/maintainability)](https://codeclimate.com/github/mendozabree/MyDiary/maintainability)
+
 This is a web application where one can write down their thoughts , feelings. Day to Day activities, it's a personal diary.
 
 ## Getting Started
@@ -61,19 +62,13 @@ This site should now be running at http://localhost:5000
 
 These are the endpoints to test
 
-| METHOD       | Endpoint           | Description  |
-| ------------- |:-------------:| -----|
-| POST      | /api/v1/auth/signup | Signup a new user |
-| GET      | /api/v1/auth/login | Login a user |
-| GET      | /api/v1/entries | Get all entries |
-| GET      | /api/v1/entries/id      | Get specific entry using an id |
-| POST | /api/v1/entries      | Create a new entry |
-| PUT      | /api/v1/entries/id      | Modify a specific entry using an id |
+<img style="float:left" src="https://github.com/mendozabree/MyDiary/blob/without_tests/endpoints.PNG" />
 
 ## Running the tests with coverage
-* Install nosetests and coverage
+
+* Setup environment variables
   ```
-  $ pip install nose coverage
+  $ set app_env=testing
   ```
 
 * Running the tests
@@ -83,4 +78,5 @@ These are the endpoints to test
 
 ## Deployment sites
 The user interfaces are hosted at https://mendozabree.github.io/My-Diary/UI/index.html
-A working demo of the app can be found at https://mydiary-cha3.herokuapp.com/
+
+A working demo of the application can be found at https://mydiary-cha3.herokuapp.com/
