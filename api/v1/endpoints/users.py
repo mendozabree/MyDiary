@@ -56,7 +56,7 @@ class Login(Resource):
             success['message'] = 'Welcome, to your diary {}!'.format(
                 login_data['username'])
             success['token'] = token
-            return success, 200
+            return {'message': success}, 200
 
         else:
             return result
