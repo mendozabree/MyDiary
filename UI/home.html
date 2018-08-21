@@ -1,83 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/diary.css">
+    <link rel="stylesheet" href="static/responsive.css">
     <link rel="icon" href="img/favicon.ico">
+    <script src="./static/entries.js"></script>
+    <script src="./static/diary.js"></script>
     <title>My Dairy</title>
 </head>
-<body>
-    <nav class="nav">
-        <ul class="top-nav">
-            <li><a class="active" href="home.html"><img src="img/MyDiary-small.PNG" alt="My Diary"></a></li>
-            <li class="right"><a href="sign_in.html">Log out</a></li>
-            <li class="right"><img src="img/user.png"></li>
-            <li class="right"><a href=profile.html>Profile</a></li>
-        </ul>
-    </nav>
-    <div class="container">
-        <img src="img/add.png" class="add" alt="Add"
-             onclick="location.href='/My-Diary/UI/new_entry.html'">
-        <div>
-            <button class="edit-btn" onclick="location.href='/My-Diary/UI/new_entry.html'"><img src="img/edit.PNG"></button>
-        </div>
-        <div class="entry" onclick="location.href='/My-Diary/UI/my_entry.html'">
-            <div>
-                <label class="date-label">12 May 2018</label>
+<body onload="getEntries()">
+    <div class="row">
+        <nav class="nav col-12">
+            <ul class="top-nav">
+                <li class="col-2"></li>
+                <li class="col-2"><img src="img/MyDiary-small.PNG" alt="My Diary"></li>
+                <li class="col-2"><a href=home.html>Home</a></li>
+                <li class="col-3"></li>
+                <li class="col-1"><img src="img/user.png"></li>
+                <li class="dropdown">
+                    <img src="img/dropdown.PNG" alt="" class="drpbtn">
+                    <div class="drpdwn-content">
+                        <a href="profile.html">My Profile</a>
+                        <a href="sign_in.html">Logout</a>
+                    </div>
+                </li>
+                <li class="col-2"></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="container row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-12">
+                    <div class="col-2">
+                        <button class="my_btn"></button>
+                    </div>
+                </div>
             </div>
-            <p class="sample_text">This is a random note just to test and see how the UI will look like.
-            This application is web based and gives a user the ability to keep track
-                of their day to day activities and emotions. Its a safe place where the
-                user can freely express them selves and look back on this day and laugh.</p>
-        </div>
-        <div>
-            <button class="edit-btn" onclick="location.href='/My-Diary/UI/new_entry.html'"><img src="img/edit.PNG"></button>
-        </div>
-        <div class="entry" onclick="location.href='/My-Diary/UI/my_entry.html'">
-            <div>
-                <label class="date-label">12 May 2018</label>
+            <div class="row" id="myEntries">
+                <div id="before"></div>
+                <!--<div class="entry col-12" onclick="location.href='/MyDiary/UI/my_entry.html'">
+                    <div class="row">
+                        <div class="col-8 col-m-8">
+                            <label class="date-label">First entry</label>
+                        </div>
+                        <div class="col-1 col-m-1"></div>
+                        <div class="col-3 col-m-3">
+                             <label class="date-label">12 May 2018</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <p class="sample_text">This is a random note just to test and see how the UI will look like.
+                    This application is web based and gives a user the ability to keep track
+                    of their day to day activities and emotions. Its a safe place where the
+                    user can freely express them selves and look back on this day and laugh.</p>
+                        </div>
+                    </div>
+                    <div class="row" >
+                        <div class="col-9 col-m-8"></div>
+                        <div class="col-3 col-m-4">
+                            <img src="img/Editbtn.png" class="my_image"onclick="location.href='/MyDiary/UI/new_entry.html'">
+                            <img src="img/View.png" class="my_image" onclick="location.href='/MyDiary/UI/my_entry.html'">
+                        </div>
+                    </div>
+                </div>-->
             </div>
-            <p class="sample_text">This is a random note just to test and see how the UI will look like.
-            This application is web based and gives a user the ability to keep track
-                of their day to day activities and emotions. Its a safe place where the
-                user can freely express them selves and look back on this day and laugh.</p>
         </div>
-        <div>
-            <button class="edit-btn" onclick="location.href='/My-Diary/UI/new_entry.html'"><img src="img/edit.PNG"></button>
-        </div>
-        <div class="entry" onclick="location.href='/My-Diary/UI/my_entry.html'">
-            <div>
-                <label class="date-label">12 May 2018</label>
-            </div>
-            <p class="sample_text">This is a random note just to test and see how the UI will look like.
-            This application is web based and gives a user the ability to keep track
-                of their day to day activities and emotions. Its a safe place where the
-                user can freely express them selves and look back on this day and laugh.</p>
-        </div>
-        <div>
-            <button class="edit-btn" onclick="location.href='/My-Diary/UI/new_entry.html'"><img src="img/edit.PNG"></button>
-        </div>
-        <div class="entry" onclick="location.href='/My-Diary/UI/my_entry.html'">
-            <div>
-                <label class="date-label">12 May 2018</label>
-            </div>
-            <p class="sample_text">This is a random note just to test and see how the UI will look like.
-            This application is web based and gives a user the ability to keep track
-                of their day to day activities and emotions. Its a safe place where the
-                user can freely express them selves and look back on this day and laugh.</p>
-        </div>
-        <div>
-            <button class="edit-btn" onclick="location.href='/My-Diary/UI/new_entry.html'"><img src="img/edit.PNG"></button>
-        </div>
-        <div class="entry" onclick="location.href='/My-Diary/UI/my_entry.html'">
-            <div>
-                <label class="date-label">12 May 2018</label>
-            </div>
-            <p class="sample_text">This is a random note just to test and see how the UI will look like.
-            This application is web based and gives a user the ability to keep track
-                of their day to day activities and emotions. Its a safe place where the
-                user can freely express them selves and look back on this day and laugh.</p>
-        </div>
+        <div class="col-2"></div>
     </div>
 </body>
 </html>

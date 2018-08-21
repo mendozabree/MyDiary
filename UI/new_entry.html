@@ -8,20 +8,31 @@
     <title>New Entry</title>
 </head>
 <body>
-    <nav class="nav">
-        <ul class="top-nav">
-            <li><a class="active" href="home.html"><img src="img/MyDiary-small.PNG" alt="My Diary"></a></li>
-            <li class="right"><a href="sign_in.html">Log out</a></li>
-            <li class="right"><img src="img/user.png"></li>
-            <li class="right"><a href=profile.html>Profile</a></li>
-        </ul>
-    </nav>
+    <div class="row">
+        <nav class="nav col-12">
+            <ul class="top-nav">
+                <li class="col-2"></li>
+                <li class="col-2"><img src="img/MyDiary-small.PNG" alt="My Diary"></li>
+                <li class="col-2"><a href=home.html>Home</a></li>
+                <li class="col-3"></li>
+                <li class="col-1"><img src="img/user.png"></li>
+                <li class="dropdown">
+                    <img src="img/dropdown.PNG" alt="" class="drpbtn">
+                    <div class="drpdwn-content">
+                        <a href="profile.html">My Profile</a>
+                        <a href="sign_in.html">Logout</a>
+                    </div>
+                </li>
+                <li class="col-2"></li>
+            </ul>
+        </nav>
+    </div>
     <div class="container">
-        <div class="my_entry">
+        <div id="entry">
             <div>
                 <input PLACEHOLDER="Enter date" class="date-label" id="my_date" onclick="pickDate()">
             </div>
-            <textarea id="entry" cols="120" rows="10" placeholder="How are you today?"></textarea>
+            <textarea cols="120" rows="10" placeholder="How are you today?"></textarea>
         </div>
         <button class="primary-btn save-btn" onclick="location.href='/My-Diary/UI/home.html'">Save</button>
     </div>

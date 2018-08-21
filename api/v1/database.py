@@ -247,7 +247,7 @@ class Entry(DatabaseConnection):
         Method with sql for getting all entries
         :return:
         """
-        all_entries_cmd = ("SELECT entry_id,title,content FROM "
+        all_entries_cmd = ("SELECT entry_id,title,content,entry_time FROM "
                            "entries WHERE user_id = %s")
 
         self.dict_cursor.execute(all_entries_cmd, (current_user,))
