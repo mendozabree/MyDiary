@@ -75,7 +75,7 @@ function addElement (entries) {
 		  console.log(firstLetter)
 		  if (firstLetter === 'v' || firstLetter === 'e'){
 			  let myId = getInt(e.target.id,4);
-			  alert("Hello "+myId);
+			  localStorage.setItem("entryId", myId)
 		  }
 		  else{
 		      alert("Hey")
@@ -86,5 +86,6 @@ function addElement (entries) {
 	  e.stopPropagation();}
 }
 function getInt(myString,lenString){
-	return myString.slice(lenString)
+	let myInt = myString.slice(lenString)
+    return parseInt(myInt)
 }

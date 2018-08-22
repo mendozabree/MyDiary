@@ -264,7 +264,7 @@ class Entry(DatabaseConnection):
             return success_msg
 
     def get_specific(self, entry_id, current_user):
-        specific_entry_cmd = "SELECT title,content FROM entries "\
+        specific_entry_cmd = "SELECT title,content,entry_date FROM entries "\
                               "WHERE entry_id = %s AND user_id = %s"
 
         self.cursor.execute(specific_entry_cmd, (entry_id, current_user))
@@ -272,11 +272,12 @@ class Entry(DatabaseConnection):
 
         if row:
             success_msg = dict()
-            entry = {}
+            entry = dict()
             success_msg['status'] = 'Success'
             success_msg['entry'] = entry
             entry['title'] = row[0]
-            entry['content'] =row[1]
+            entry['content'] = row[1]
+            entry['date'] = row[2]
             return {'message': success_msg}, 200
         else:
             error_msg = dict()
@@ -315,13 +316,16 @@ class Entry(DatabaseConnection):
                 return {'message': time_expired}, 400
             else:
                 modify_cmd = ("UPDATE entries SET title=%s,content=%s "
-                              "WHERE user_id=%s")
+                              "WHERE entry_id=%s AND user_id=%s")
                 self.cursor.execute(modify_cmd, (modify_data['title'],
                                                  modify_data['content'],
+                                                 entry_id,
                                                  current_user))
                 success_msg = dict()
                 success_msg['status'] = "Success"
                 success_msg['message'] = 'Updated your entry.'
+                success_msg['entryId'] = entry_id
+                success_msg['user'] = current_user
                 return {'message': success_msg}, 200
 
 

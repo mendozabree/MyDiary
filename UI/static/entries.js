@@ -6,7 +6,6 @@ function getEntries() {
     })
         .then((response) => response.json())
         .then(function (data) {
-            console.log(data)
 			if (data['status'] === 'Success') {
 			    if (data['message'] === 'You have no entries yet!'){
 			        let myDiv = document.getElementById('before')
@@ -94,18 +93,25 @@ function addElement (entries) {
 		  let entryId = e.target.id;
 		  let firstLetter = entryId.charAt(0);
 		  console.log(firstLetter)
-		  if (firstLetter === 'v' || firstLetter === 'e'){
+		  if (firstLetter === 'v'){
 			  let myId = getInt(e.target.id,4);
-			  alert("Hello "+myId);
+			  localStorage.setItem("viewEntryId", myId)
+              // viewSpecific()
+			  location.href='my_entry.html'
 		  }
-		  else{
-		      alert("Hey")
-		  }
+		  if (firstLetter === 'e'){
+		      let editId = getInt(e.target.id,4);
+			  localStorage.setItem("editEntryId", editId)
+              // viewSpecific()
+			  location.href='new_entry.html'
+          }
 		// let clickedItem = e.target.id;
 		// alert("Hello "+clickedItem);
 	}
-	  e.stopPropagation();}
+	  // e.stopPropagation();
+  }
 }
 function getInt(myString,lenString){
-	return myString.slice(lenString)
+    let myInt = myString.slice(lenString)
+    return parseInt(myInt)
 }

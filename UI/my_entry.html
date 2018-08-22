@@ -5,18 +5,23 @@
     <title>My Entry</title>
     <link rel="icon" href="img/favicon.ico">
     <link rel="stylesheet" href="static/diary.css">
+    <link rel="stylesheet" href="static/responsive.css">
+    <script src="static/diary.js"></script>
+    <script src="static/entries.js"></script>
+    <script src="static/viewEntry.js"></script>
 </head>
-<body>
+<body onload="viewSpecific()">
     <div class="row">
         <nav class="nav col-12">
             <ul class="top-nav">
                 <li class="col-2"></li>
-                <li class="col-2"><img src="img/MyDiary-small.PNG" alt="My Diary"></li>
-                <li class="col-2"><a href=home.html>Home</a></li>
+                <li><img src="img/MyDiary-small.PNG" alt="My Diary" id="myImg"></li>
+                <li class="col-1"><a href=home.html>Home</a></li>
+                <li class="col-1"><a class="active" href="my_entry.html">Entry</a></li>
                 <li class="col-3"></li>
                 <li class="col-1"><img src="img/user.png"></li>
                 <li class="dropdown">
-                    <img src="img/dropdown.PNG" alt="" class="drpbtn">
+                    <img src="img/dropdown.PNG" alt="" class="drpbtn" id="nav_img">
                     <div class="drpdwn-content">
                         <a href="profile.html">My Profile</a>
                         <a href="sign_in.html">Logout</a>
@@ -26,17 +31,23 @@
             </ul>
         </nav>
     </div>
-    <div class="container">
-        <div id="entry">
-            <div>
-                <label class="date-label">12 May 2018</label>
-                <button class="edit-btn" onclick="location.href='/My-Diary/UI/new_entry.html'"><img src="img/edit.PNG"></button>
+    <div class="container row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div id="entry" class="row">
+            <div class="row">
+                <div class="col-3">
+                    <label class="date-label" id="date"></label>
+                </div>
+                <div class="col-3">
+                    <label id="title"></label>
+                </div>
             </div>
-            <p class="sample_text">This is a random note just to test and see how the UI will look like.
-            This application is web based and gives a user the ability to keep track
-                of their day to day activities and emotions. Its a safe place where the
-                user can freely express them selves and look back on this day and laugh.</p>
+            <p class="sample_text" id="content"></p>
         </div>
+        </div>
+        <div class="col-2"></div>
+
     </div>
 </body>
 </html>
