@@ -40,7 +40,8 @@ class DatabaseConnection:
                               "first_name varchar(100) NOT NULL,"
                               "last_name varchar(100) NOT NULL,"
                               "email varchar(100) NOT NULL,"
-                              "password varchar(100) NOT NULL)")
+                              "password varchar(100) NOT NULL,"
+                              "picture bytea)")
         self.cursor.execute(user_table_command)
 
     def create_entries_table(self):
@@ -49,7 +50,7 @@ class DatabaseConnection:
         entry_table_command = ("CREATE TABLE IF NOT EXISTS entries"
                                "(entry_id SERIAL PRIMARY KEY,"
                                "title VARCHAR(100) NOT NULL,"
-                               "content VARCHAR(255) NOT NULL,"
+                               "content VARCHAR(8000) NOT NULL,"
                                "entry_date VARCHAR(100) NOT NULL,"
                                "entry_time VARCHAR(100) NOT NULL,"
                                "entry_timestamp VARCHAR(100) NOT NULL,"                               
@@ -104,10 +105,12 @@ class User(DatabaseConnection):
                     fields_result['message'] = 'Username or email in use'
                     return {'message': fields_result}, 400
                 else:
+                    path_to_default = "C:\\Users\\eugen\\Desktop\\MyDiary\\UI\\img\\user.png"
+                    my_picture = open(path_to_default, 'rb').read()
                     new_user_command = ("INSERT INTO users"
                                         "(username,first_name,last_name,"
-                                        "email,password)"
-                                        "VALUES (%s,%s,%s,%s,%s)")
+                                        "email,password,picture)"
+                                        "VALUES (%s,%s,%s,%s,%s,%s)")
 
                     user_password = generate_password_hash(
                             new_user_data['password'],
@@ -119,7 +122,8 @@ class User(DatabaseConnection):
                                          new_user_data['first_name'],
                                          new_user_data['last_name'],
                                          new_user_data['email'],
-                                         user_password)
+                                         user_password,
+                                         psycopg2.Binary(my_picture))
                                         )
 
                     success_msg = dict()
@@ -182,6 +186,72 @@ class User(DatabaseConnection):
             key_err_result['help'] = 'Please fill in missing field'
             return {"message": key_err_result}, 400
 
+    def update_username(self, update_data, current_user):
+        get_user = "SELECT username from users WHERE username='{}'"\
+                   .format(update_data['username'])
+        self.cursor.execute(get_user)
+        user = self.cursor.fetchone()
+        if user:
+            error = dict()
+            error['status'] = 'Fail'
+            error['message'] = 'Username is taken'
+            return {'message': error}, 400
+        else:
+            update_query = ("UPDATE users SET username=%s "
+                            "WHERE user_id=%s")
+            self.cursor.execute(update_query,
+                                (update_data['username'],
+                                 current_user))
+            msg = dict()
+            msg['status'] = 'Success'
+            msg['message'] = 'Username successfully updated'
+            return {'message': msg}, 200
+
+    def update_password(self, update_data, current_user):
+        expected_key_list = ['current_password', 'new_password']
+        fields_check_result = fields_check(expected_key_list=expected_key_list,
+                                           pending_data=update_data)
+
+        if fields_check_result:
+            field_result = dict()
+            field_result['status'] = 'Fail'
+            field_result['message'] = fields_check_result
+            return {'message': field_result}, 400
+        else:
+            old_password = "SELECT password from users where user_id='{}'" \
+                .format(current_user)
+            self.cursor.execute(old_password)
+            current_password = self.cursor.fetchone()
+            # print(current_password)
+            pswd_check = check_password_hash(current_password[0],
+                                             update_data['current_password'])
+
+            if pswd_check:
+                if update_data['current_password'] == update_data['new_password']:
+                    error = dict()
+                    error['status'] = 'Fail'
+                    error['message'] = 'Passwords match, ' \
+                                       'please enter a different password'
+                    return {'message': error}, 400
+                else:
+                    new_password = generate_password_hash(
+                            update_data['new_password'],
+                            method='sha256'
+                                                    )
+                    update_cmd = "UPDATE users SET password=%s WHERE user_id=%s"
+                    self.cursor.execute(update_cmd,
+                                        (new_password,
+                                         current_user))
+                    success_msg = dict()
+                    success_msg['status'] = 'Success'
+                    success_msg['message'] = 'Password successfully updated'
+                    return {'message': success_msg}, 200
+            else:
+                result = dict()
+                result['status'] = 'Fail'
+                result['message'] = 'Current password is wrong'
+                return {'message': result}, 400
+
 
 class Entry(DatabaseConnection):
 
@@ -222,13 +292,18 @@ class Entry(DatabaseConnection):
                                  "entry_timestamp,user_id) "
                                  "VALUES (%s,%s,%s,%s,%s,%s)")
 
+                # entry_time = datetime.datetime.now().replace(
+                #             second=0, microsecond=0).time()
                 entry_time = datetime.datetime.now().replace(
-                            second=0, microsecond=0).time()
+                            microsecond=0).time()
                 entry_timestamp = time.time()
+
+                date_now = datetime.date.today()
+                format_date = date_now.strftime('%d %b %Y')
 
                 self.cursor.execute(new_entry_cmd, (new_entry_data['title'],
                                                     new_entry_data['content'],
-                                                    datetime.date.today(),
+                                                    format_date,
                                                     entry_time,
                                                     entry_timestamp,
                                                     current_user))
@@ -247,8 +322,8 @@ class Entry(DatabaseConnection):
         Method with sql for getting all entries
         :return:
         """
-        all_entries_cmd = ("SELECT entry_id,title,content,entry_time FROM "
-                           "entries WHERE user_id = %s")
+        all_entries_cmd = ("SELECT entry_id,title,content,entry_date,entry_time,"
+                           "entry_timestamp FROM entries WHERE user_id = %s")
 
         self.dict_cursor.execute(all_entries_cmd, (current_user,))
         rows = self.dict_cursor.fetchall()
@@ -264,7 +339,7 @@ class Entry(DatabaseConnection):
             return success_msg
 
     def get_specific(self, entry_id, current_user):
-        specific_entry_cmd = "SELECT title,content,entry_date FROM entries "\
+        specific_entry_cmd = "SELECT title,content,entry_date,entry_time FROM entries "\
                               "WHERE entry_id = %s AND user_id = %s"
 
         self.cursor.execute(specific_entry_cmd, (entry_id, current_user))
@@ -278,6 +353,7 @@ class Entry(DatabaseConnection):
             entry['title'] = row[0]
             entry['content'] = row[1]
             entry['date'] = row[2]
+            entry['time'] = row[3]
             return {'message': success_msg}, 200
         else:
             error_msg = dict()
@@ -347,14 +423,10 @@ def fields_check(expected_key_list, pending_data):
 
     for my_key in similar:
         value = pending_data[my_key]
-
-        if value == '':
+        new_value = value.strip()
+        if len(new_value) == 0:
             missing_value = 'Please fill in ' + my_key
             messages.append(missing_value)
-
-        if value == ' ':
-            result = 'Empty spaces are not allowed.'
-            messages.append(result)
 
     return messages
 
@@ -368,5 +440,6 @@ def is_email_valid(email):
 
 if __name__ == '__main__':
     db = DatabaseConnection()
+    db.drop_tables()
     db.create_users_table()
     db.create_entries_table()

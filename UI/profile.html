@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/diary.css">
+    <link rel="stylesheet" href="static/responsive.css">
     <link rel="icon" href="img/favicon.ico">
     <script src="static/diary.js"></script>
+    <script src="static/profile.js"></script>
     <title>Profile</title>
 </head>
 <body>
@@ -12,12 +14,13 @@
         <nav class="nav col-12">
             <ul class="top-nav">
                 <li class="col-2"></li>
-                <li class="col-2"><img src="img/MyDiary-small.PNG" alt="My Diary"></li>
-                <li class="col-2"><a href=home.html>Home</a></li>
+                <li><img src="img/MyDiary-small.PNG" alt="My Diary" id="myImg"></li>
+                <li class="col-1"><a href=home.html>Home</a></li>
+                <li class="col-1"><a class="active" href=profile.html>Profile</a></li>
                 <li class="col-3"></li>
-                <li class="col-1"><img src="img/user.png"></li>
+                <li class="col-1 userPic"><img src="img/profile.jpg"></li>
                 <li class="dropdown">
-                    <img src="img/dropdown.PNG" alt="" class="drpbtn">
+                    <img src="img/dropdown.PNG" alt="" class="drpbtn" id="nav_img">
                     <div class="drpdwn-content">
                         <a href="profile.html">My Profile</a>
                         <a href="sign_in.html">Logout</a>
@@ -27,50 +30,99 @@
             </ul>
         </nav>
     </div>
-    <div class="container">
-        <div class="profile">
-            <h2>Your Profile</h2>
-            <h3>Account details</h3>
-            <div>
-                <div>
-                    <img src="img/profile.jpg" alt="Profile pic">
-                    <button class="primary-btn">Change profile picture</button>
-                </div>
-                <div>
-                    <div>
-                        <label class="label">Change username: </label>
-                        <input type="text" class="text-box">
+    <div class="container row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="row profile">
+                <div class="col-2"></div>
+                <div class="col-8">
+                    <h3>Account details</h3>
+                    <div class="row">
+                        <div class="profContainer col-5">
+                            <img src="img/profile.jpg" alt="Profile pic" id="userPicture">
+                        </div>
                     </div>
-                    <div><h4>Change Password</h4></div>
-                    <div>
-                        <label class="label">Enter current password: </label>
-                        <input type="text" class="text-box">
+                    <div class="row">
+                        <div class="col-8 col-m-8">
+                            <button class="primary-btn" id="uploadBtn">Change profile picture</button>
+                            <input type="file" id="imgUpload" placeholder="photo">
+                        </div>
                     </div>
-                    <div>
-                        <label class="label">Enter new password: </label>
-                        <input type="text" class="text-box">
+                    <div class="row">
+                        <div class="col-3 col-m-3">
+                            <label class="label">Change username: </label>
+                        </div>
+                        <div class="col-4 col-m-4">
+                            <input type="text" class="text-box" id="username">
+                        </div>
+                    </div>
+                    <div class="row col-12"><h4>Change Password</h4></div>
+                    <div class="row">
+                        <div class="col-5 col-m-5">
+                            <label class="label">Enter current password: </label>
+                        </div>
+                        <div class="col-4 col-m-4">
+                            <input type="password" class="text-box" id="currentPassword">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5 col-m-5">
+                            <label class="label">Enter new password: </label>
+                        </div>
+                        <div class="col-4 col-m-4">
+                            <input type="password" class="text-box" id="newPassword">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5 col-m-5">
+                            <label class="label">Confirm new password: </label>
+                        </div>
+                        <div class="col-4 col-m-4">
+                            <input type="password" class="text-box" id="confirmPassword">
+                        </div>
+                    </div>
+                    <h3>Diary Details</h3>
+                    <div class="row">
+                        <div class="col-3">
+                            <label class="label">Number of entries: </label>
+                        </div>
+                        <div class="col-2 col-m-2">
+                            <label class="label" id="no_of_entries">5</label>
+                        </div>
+                    </div>
+                    <div class="row col-12 col-m-12">
+                        <label class="label">
+                            Want to receive notifications on when to write? Select the checkbox below.
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-1 col-m-1">
+                            <input type="checkbox" value="notifications">
+                        </div>
+                        <div class="col-5 col-m-5">
+                            <label class="label">Send me an email on this day:</label>
+                        </div>
+                        <div class="col-3 col-m-3">
+                            <input id="my_date" onclick="pickDate()" PLACEHOLDER="Click to enter date">
+                        </div>
+                    </div>
+                    <div class="row col-12 message" id="uname"> </div>
+                    <div class="row col-12 message" id="pswd"></div>
+                    <div class="row col-12 error" id="errorMsg"> </div>
+                    <div class="row">
+                        <div class="col-6 col-m-6"></div>
+                        <div class="col-4 col-m-4">
+                            <button class="primary-btn" id="save" onclick="changeUsername(); changePassword()">Save Changes</button>
+                        </div>
+                        <div class="col-2 col-m-2">
+                            <button class="edit-btn"  onclick="location.href='home.html'">Cancel</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <h3>Diary Details</h3>
-            <div>
-                <div>
-                    <label class="label">Number of entries: </label>
-                    <label class="label" id="no_of_entries">5</label>
-                </div>
-                <label class="label">Want to set reminders for when to write, select the checkbox below.</label>
-                <div>
-                    <input type="checkbox" value="notifications">
-                    <label class="label">Send me an email on this day:
-                    <input id="my_date" onclick="pickDate()" PLACEHOLDER="Click to enter date">
-                    </label>.
-                </div>
-            </div>
-            <div>
-                <button class="primary-btn save-btn">Save Changes</button>
-                <a class="secondary-btn" href="home.html">Cancel</a>
+                <div class="col-2"></div>
             </div>
         </div>
+        <div class="col-2"></div>
     </div>
 </body>
 </html>

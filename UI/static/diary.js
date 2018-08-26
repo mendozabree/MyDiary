@@ -2,19 +2,20 @@ function pickDate(){
     document.getElementById('my_date').setAttribute("type", "date");
 }
 function registerUser() {
-    let firstname = document.getElementById('firstName').value;
-    let lastname = document.getElementById('lastName').value;
+    let firstName = document.getElementById('firstName').value;
+    let lastName = document.getElementById('lastName').value;
     let username = document.getElementById('userName').value;
     let email = document.getElementById('email').value;
     let password = document.getElementById('password').value;
+    let confirmPassword = document.getElementById('confirm_password').value;
     fetch('http://127.0.0.1:5000/api/v1/auth/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=UTF-8'
         },
         body: JSON.stringify({
-            username: username, first_name: firstname, last_name: lastname,
-            email: email, password: password
+            username: username, first_name: firstName, last_name: lastName,
+            email: email, password: password, confirm_password:confirmPassword
         })
     })
         .then((response) => response.json())
@@ -23,7 +24,10 @@ function registerUser() {
             if (output === 'User successfully registered.'){
                 location.href='./home.html'
             }else{
-                document.getElementById('output').innerHTML = data['message']['message'];
+                console.log(data['message']['message']);
+                let errorMessages = document.getElementById('output');
+                errorMessages.innerText = data['message']['message'];
+                errorMessages.setAttribute("class", "error")
             }
         })
 }
@@ -46,7 +50,9 @@ function login(){
                 document.cookie = token + ";path=/";
                 location.href='./home.html'
             }else {
-                document.getElementById('status').innerHTML = result['message']['message'];
+                let error = document.getElementById('status')
+                error.innerHTML = result['message']['message'];
+                error.setAttribute('class', 'error')
             }
         })
 }

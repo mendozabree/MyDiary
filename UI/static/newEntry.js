@@ -13,8 +13,12 @@ function userEntry() {
                 console.log(data['message']['message'])
                 location.href='home.html'
 
-			}else{
-				alert(data['message']['msg'])
 			}
+			if (data['message']['status'] === 'Fail'){
+				document.getElementById('error').innerText = data['message']['message']
+                // console.log(data)
+			}else{
+			    location.href='unauthorized.html'
+            }
         })
 }

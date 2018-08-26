@@ -8,7 +8,8 @@ user_creation_model = api.model('Create_My_User', {
     'first_name': fields.String('Your first name', description='First name'),
     'last_name': fields.String('Your last name', description='User last name'),
     'email': fields.String('Your email', description='User email'),
-    'password': fields.String('Your password', description='User password')
+    'password': fields.String('Your password', description='User password'),
+    'confirm_password': fields.String('Confirm password', description='Confirm password')
 })
 
 login_model = api.model('Login_User', {

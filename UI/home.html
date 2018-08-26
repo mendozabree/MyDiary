@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/diary.css">
     <link rel="stylesheet" href="static/responsive.css">
+    <link rel="stylesheet" href="static/buttons.css">
     <link rel="icon" href="img/favicon.ico">
-    <script src="./static/entries.js"></script>
+    <script src="static/getEntries.js"></script>
     <script src="./static/diary.js"></script>
-    <script src="static/viewEntry.js"></script>
     <title>My Dairy</title>
 </head>
 <body onload="getEntries()">
@@ -18,7 +18,7 @@
                 <li><img src="img/MyDiary-small.PNG" alt="My Diary" id="myImg"></li>
                 <li class="col-1"><a class="active" href=home.html>Home</a></li>
                 <li class="col-3"></li>
-                <li class="col-1"><img src="img/user.png"></li>
+                <li class="col-1 userPic"><img src="img/profile.jpg"></li>
                 <li class="dropdown">
                     <img src="img/dropdown.PNG" alt="" class="drpbtn" id="nav_img">
                     <div class="drpdwn-content">
@@ -35,37 +35,43 @@
         <div class="col-8">
             <div class="row">
                 <div class="col-12">
-                    <div class="col-2">
-                        <button class="my_btn" onclick="location.href='/MyDiary/UI/new_entry.html'"></button>
+                    <div class="col-2 btn-container">
+                        <input type="image" src="img/New.png" class="img-btn">
+                        <div class="overlay">
+                            <img src="img/New_h.png" class="img-btn" alt="" onclick="location.href='/MyDiary/UI/new_entry.html'">
+                        </div>
+                        <!-- <button class="my_btn" onclick="location.href='/MyDiary/UI/new_entry.html'"></button>-->
                     </div>
                 </div>
             </div>
             <div class="row" id="myEntries">
-                <div id="before"></div>
-                <!--<div class="entry col-12" onclick="location.href='/MyDiary/UI/my_entry.html'">
-                    <div class="row">
-                        <div class="col-8 col-m-8">
+                <h2></h2>
+                <!--0<div class="entry col-12" onclick="location.href='/MyDiary/UI/my_entry.html'">
+                    1<div class="row">
+                        1<div class="col-7 col-m-8">
                             <label class="date-label">First entry</label>
                         </div>
-                        <div class="col-1 col-m-1"></div>
-                        <div class="col-3 col-m-3">
+                        2<div class="col-1 col-m-1"></div>
+                        3<div class="col-3 col-m-3">
                              <label class="date-label">12 May 2018</label>
                         </div>
+                        7 time 1
                     </div>
-                    <div class="row">
-                        <div class="col-12">
+                    2<div class="row">
+                        4<div class="col-12">
                             <p class="sample_text">This is a random note just to test and see how the UI will look like.
                     This application is web based and gives a user the ability to keep track
                     of their day to day activities and emotions. Its a safe place where the
                     user can freely express them selves and look back on this day and laugh.</p>
                         </div>
                     </div>
-                    <div class="row" >
-                        <div class="col-9 col-m-8"></div>
-                        <div class="col-3 col-m-4">
-                            <img src="img/Editbtn.png" class="my_image"onclick="location.href='/MyDiary/UI/new_entry.html'">
+                    3<div class="row" >
+                        5<div class="col-9 col-m-8"></div>
+                        6<div class="col-2 col-m-4 btn-container">
                             <img src="img/View.png" class="my_image" onclick="location.href='/MyDiary/UI/my_entry.html'">
+                            div
                         </div>
+                        8 btn 1<img src="img/Editbtn.png" class="my_image"onclick="location.href='/MyDiary/UI/new_entry.html'">
                     </div>
                 </div>-->
             </div>

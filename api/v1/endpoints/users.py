@@ -4,7 +4,7 @@ This module contains the User endpoints, login and signup
 """
 
 from flask_restplus import Resource
-from flask_jwt_extended import create_access_token, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import datetime
 
 from api import api
@@ -21,6 +21,14 @@ authorizations = {'api_key': {
 
 # authorizations = {'Authorization': 'Bearer {}'.format(token)}
 
+
+@api.route('/home')
+class Home(Resource):
+    @jwt_required
+    def get(self):
+        return {'message': 'Welcome user'}, 200
+
+
 @api.route('/api/v1/auth/signup')
 class Signup(Resource):
     """
@@ -30,9 +38,14 @@ class Signup(Resource):
     @api.expect(user_creation_model)
     def post(self):
         """Method for registration of a user"""
-
-        result = db.register_user(new_user_data=api.payload)
-        return result
+        if api.payload['password'] == api.payload['confirm_password']:
+            result = db.register_user(new_user_data=api.payload)
+            return result
+        else:
+            pswd_error = dict()
+            pswd_error['status'] = 'Fail'
+            pswd_error['message'] = 'Passwords do not match'
+            return {'message': pswd_error}, 400
 
 
 @api.route('/api/v1/auth/login')
@@ -48,7 +61,7 @@ class Login(Resource):
         login_data = api.payload
 
         result = db.login_user(login_data=login_data)
-        if (isinstance(result, int)):
+        if isinstance(result, int):
             expires = datetime.timedelta(hours=4)
             token = create_access_token(result, expires_delta=expires)
             success = dict()
@@ -60,3 +73,29 @@ class Login(Resource):
 
         else:
             return result
+
+
+@api.route('/api/v1/auth/change_username')
+class UpdateUsername(Resource):
+    @jwt_required
+    def put(self):
+        current_user = get_jwt_identity()
+        result = db.update_username(update_data=api.payload,
+                                    current_user=current_user)
+        return result
+
+
+@api.route('/api/v1/auth/change_password')
+class UpdatePassword(Resource):
+    @jwt_required
+    def put(self):
+        if api.payload['new_password'] == api.payload['confirm_password']:
+            current_user = get_jwt_identity()
+            result = db.update_password(update_data=api.payload,
+                                        current_user=current_user)
+            return result
+        else:
+            error = dict()
+            error['status'] = 'Fail'
+            error['message'] = 'New passwords do not match'
+            return {'message': error}, 400
