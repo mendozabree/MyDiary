@@ -4,7 +4,6 @@ import datetime
 import time
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
 
 
 class DatabaseConnection:
@@ -12,18 +11,12 @@ class DatabaseConnection:
 
     def __init__(self):
         """dB connection and cursors"""
-
-        app_env = os.environ.get('app_env', None)
-
-        if app_env == 'testing':
-            self.connection = psycopg2.connect(
-                "dbname='diaries_testdb' user='postgres' host='localhost'"
-                "password='' port='5432'")
-
-        else:
-            self.connection = psycopg2.connect(
-                "dbname='diarydb' user='postgres' host='localhost'"
-                "password='#5T0uch3' port='5432'")
+        self.connection = psycopg2.connect(
+            "dbname='d4ce0ovh3865o9'"
+            "user='bnpybdmuuyduqn'"
+            "host='ec2-54-163-246-5.compute-1.amazonaws.com'"
+            "password='1575180a621166871194e43a3ef908e4741aabb340e48b3bea28c4ddc332fe6f'"
+            "port='5432'")
 
         self.connection.autocommit = True
 
