@@ -12,7 +12,7 @@ class DatabaseConnection:
     def __init__(self):
         """dB connection and cursors"""
         self.connection = psycopg2.connect(
-            "database='d4ce0ovh3865o9'"
+            "dbname='d4ce0ovh3865o9'"
             "user='bnpybdmuuyduqn'"
             "host='ec2-54-163-246-5.compute-1.amazonaws.com'"
             "password='1575180a621166871194e43a3ef908e4741aabb340e48b3bea28c4ddc332fe6f'"
