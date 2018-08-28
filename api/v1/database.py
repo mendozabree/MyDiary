@@ -113,8 +113,7 @@ class User(DatabaseConnection):
                                          new_user_data['first_name'],
                                          new_user_data['last_name'],
                                          new_user_data['email'],
-                                         user_password,
-                                         psycopg2.Binary(my_picture))
+                                         user_password)
                                         )
 
                     success_msg = dict()
