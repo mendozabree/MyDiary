@@ -98,12 +98,10 @@ class User(DatabaseConnection):
                     fields_result['message'] = 'Username or email in use'
                     return {'message': fields_result}, 400
                 else:
-                    path_to_default = "C:\\Users\\eugen\\Desktop\\MyDiary\\UI\\img\\user.png"
-                    my_picture = open(path_to_default, 'rb').read()
                     new_user_command = ("INSERT INTO users"
                                         "(username,first_name,last_name,"
-                                        "email,password,picture)"
-                                        "VALUES (%s,%s,%s,%s,%s,%s)")
+                                        "email,password)"
+                                        "VALUES (%s,%s,%s,%s,%s)")
 
                     user_password = generate_password_hash(
                             new_user_data['password'],
