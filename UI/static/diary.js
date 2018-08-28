@@ -22,6 +22,9 @@ function registerUser() {
         .then(function (data) {
             let output = data['message']['message'];
             if (output === 'User successfully registered.'){
+                let token = data['message']['token'];
+                document.cookie = token + ";expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+                document.cookie = token + ";path=/";
                 location.href='./home.html'
             }else{
                 console.log(data['message']['message']);
