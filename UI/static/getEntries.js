@@ -1,6 +1,6 @@
 let token = document.cookie;
 function getEntries() {
-    fetch('http://127.0.0.1:5000/api/v1/entries', {
+    fetch('https://r-mydiary.herokuapp.com/api/v1/entries', {
         method: 'GET',
         headers: {Authorization : `Bearer ${document.cookie}`}
     })
