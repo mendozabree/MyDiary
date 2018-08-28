@@ -18,7 +18,7 @@ window.onload = function () {
 function changeUsername() {
     let username = document.getElementById('username').value;
     if (username || username !== "") {
-        fetch('http://127.0.0.1:5000/api/v1/auth/change_username',{
+        fetch('https://r-mydiary.herokuapp.com/api/v1/auth/change_username',{
             method: 'PUT',
             headers: {Authorization : `Bearer ${document.cookie}`,
             'Content-Type':'application/json'},
@@ -46,7 +46,7 @@ function changePassword() {
     let newPassword = document.getElementById('newPassword').value;
     let confirmPassword = document.getElementById('confirmPassword').value;
     if (newPassword || newPassword !== "") {
-        fetch('http://127.0.0.1:5000/api/v1/auth/change_password',{
+        fetch('https://r-mydiary.herokuapp.com/api/v1/auth/change_password',{
             method: 'PUT',
             headers: {Authorization : `Bearer ${document.cookie}`,
             'Content-Type':'application/json'},

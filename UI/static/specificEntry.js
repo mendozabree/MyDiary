@@ -1,7 +1,7 @@
 function viewSpecific(){
     // location.href='/MyDiary/UI/my_entry.html'
     let entryId = localStorage.getItem("viewEntryId")
-    fetch('http://127.0.0.1:5000/api/v1/entries/' + entryId, {
+    fetch('https://r-mydiary.herokuapp.com/api/v1/entries/' + entryId, {
         method: 'GET',
         headers: {Authorization : `Bearer ${document.cookie}`}
     })
@@ -23,7 +23,7 @@ function viewSpecific(){
 
 }
 function checkHeader(){
-    fetch('http://127.0.0.1:5000/home',{
+    fetch('https://r-mydiary.herokuapp.com/home',{
         method:'GET',
         headers: {Authorization : `Bearer ${document.cookie}`}
     })
@@ -50,7 +50,7 @@ function modifyEntry(){
         update.style.display = 'block';
         let entryId = localStorage.getItem("editEntryId")
         let myId = parseInt(entryId)
-        let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
+        let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
         fetch(url, {
             method: 'GET',
             headers: {Authorization : `Bearer ${document.cookie}`}
@@ -86,7 +86,7 @@ function editUserEntry() {
     let title = document.getElementById('my_title').value
     let content = document.getElementById('my_content').innerText
     let myId = parseInt(entryId)
-    let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
+    let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
     fetch( url, {
         method: 'PUT',
         headers: {Authorization : `Bearer ${document.cookie}`,

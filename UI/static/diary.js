@@ -8,7 +8,7 @@ function registerUser() {
     let email = document.getElementById('email').value;
     let password = document.getElementById('password').value;
     let confirmPassword = document.getElementById('confirm_password').value;
-    fetch('https://r-mydiary.herokuapp.com//api/v1/auth/signup', {
+    fetch('https://r-mydiary.herokuapp.com/api/v1/auth/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=UTF-8'
