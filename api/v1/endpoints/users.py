@@ -40,7 +40,16 @@ class Signup(Resource):
         """Method for registration of a user"""
         if api.payload['password'] == api.payload['confirm_password']:
             result = db.register_user(new_user_data=api.payload)
-            return result
+            if isinstance(result, int):
+                expires = datetime.timedelta(hours=4)
+                token = create_access_token(result, expires_delta=expires)
+                success = dict()
+                success['status'] = 'Success'
+                success['message'] = 'Welcome, to your diary'
+                success['token'] = token
+                return {'message': success}, 201
+            else:
+                return result, 400
         else:
             pswd_error = dict()
             pswd_error['status'] = 'Fail'
@@ -99,3 +108,12 @@ class UpdatePassword(Resource):
             error['status'] = 'Fail'
             error['message'] = 'New passwords do not match'
             return {'message': error}, 400
+
+
+@api.route('/api/v1/logout')
+class LogoutUser(Resource):
+    @jwt_required
+    def get(self):
+        current_user = get_jwt_identity()
+        result = db.logout_user(current_user=current_user)
+        return result

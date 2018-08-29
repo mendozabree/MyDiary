@@ -34,7 +34,7 @@ class DatabaseConnection:
                               "last_name varchar(100) NOT NULL,"
                               "email varchar(100) NOT NULL,"
                               "password varchar(100) NOT NULL,"
-                              "picture bytea)")
+                              "login_status varchar(50) NOT NULL)")
         self.cursor.execute(user_table_command)
 
     def create_entries_table(self):
@@ -96,12 +96,12 @@ class User(DatabaseConnection):
                     fields_result = dict()
                     fields_result['status'] = 'Fail'
                     fields_result['message'] = 'Username or email in use'
-                    return {'message': fields_result}, 400
+                    return {'message': fields_result}
                 else:
                     new_user_command = ("INSERT INTO users"
                                         "(username,first_name,last_name,"
-                                        "email,password)"
-                                        "VALUES (%s,%s,%s,%s,%s)")
+                                        "email,password,login_status)"
+                                        "VALUES (%s,%s,%s,%s,%s,%s)")
 
                     user_password = generate_password_hash(
                             new_user_data['password'],
@@ -113,14 +113,17 @@ class User(DatabaseConnection):
                                          new_user_data['first_name'],
                                          new_user_data['last_name'],
                                          new_user_data['email'],
-                                         user_password)
-                                        )
+                                         user_password,
+                                         'True'
+                                         ))
 
-                    success_msg = dict()
-                    success_msg['status'] = 'Success'
-                    success_msg['message'] = 'User successfully registered.'
+                    user_id_cmd = "SELECT user_id FROM users " \
+                                  "WHERE username = '{}'" \
+                        .format(new_user_data['username'])
 
-                    return {'message': success_msg}, 201
+                    self.cursor.execute(user_id_cmd)
+                    user = self.cursor.fetchone()
+                    return user[0]
 
             else:
                 email_error = dict()
@@ -142,7 +145,7 @@ class User(DatabaseConnection):
         """
 
         try:
-            login_user_cmd = "SELECT user_id,password FROM users " \
+            login_user_cmd = "SELECT user_id,password,login_status FROM users " \
                              "WHERE username = '{}'" \
                              .format(login_data['username'])
 
@@ -154,7 +157,18 @@ class User(DatabaseConnection):
                                                  login_data['password'])
 
                 if pswd_check:
-                    return user[0]
+                    login_status = user[2]
+
+                    if login_status == 'False':
+                        logged_in_cmd = ("UPDATE users SET login_status='True' "
+                                         "WHERE user_id={}".format(user[0]))
+                        self.cursor.execute(logged_in_cmd)
+                        return user[0]
+                    else:
+                        msg = dict()
+                        msg['status'] = 'Fail'
+                        msg['message'] = 'You are already logged in!'
+                        return {'message': msg}, 400
                 else:
                     pswd_result = dict()
                     pswd_result['status'] = 'Fail'
@@ -241,6 +255,23 @@ class User(DatabaseConnection):
                 result['status'] = 'Fail'
                 result['message'] = 'Current password is wrong'
                 return {'message': result}, 400
+
+    def logout_user(self, current_user):
+        logout_cmd = "SELECT login_status from users WHERE user_id='{}'"\
+                   .format(current_user)
+        self.cursor.execute(logout_cmd)
+        status = self.cursor.fetchone()
+        msg = dict()
+        if status[0] == 'True':
+            logged_out_cmd = "UPDATE users SET login_status='False' " \
+                             "WHERE user_id={}".format(current_user)
+            self.cursor.execute(logged_out_cmd)
+            msg['status'] = 'Success'
+            msg['message'] = 'You have logged out!'
+            return {'message': msg}, 200
+        else:
+            msg['status'] = 'Fail'
+            msg['message'] = 'You need to be logged in to logout!'
 
 
 class Entry(DatabaseConnection):
