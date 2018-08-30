@@ -1,26 +1,30 @@
-let token = document.cookie;
+
 function getEntries() {
-    fetch('https://r-mydiary.herokuapp.com/api/v1/entries', {
+    let token = localStorage.getItem('token');
+    // fetch('https://r-mydiary.herokuapp.com/api/v1/entries', {
+    fetch('http://127.0.0.1:5000/api/v1/entries', {
         method: 'GET',
-        headers: {Authorization : `Bearer ${document.cookie}`}
+        headers: {Authorization : `Bearer ${token}`}
     })
         .then((response) => response.json())
         .then(function (data) {
+            let heading = document.createElement("h2")
+            document.getElementById('myEntries').appendChild(heading)
+            if (data['msg'] === 'Token has expired'){
+                refreshToken()
+                heading.innerText = 'We are sorry, please reload the page'
+            }
 			if (data['status'] === 'Success') {
-			    let heading = document.createElement("h2")
+
 			    if (data['message'] === 'You have no entries yet!'){
 			        heading.innerText = 'You have no entries, start today by clicking New Entry above.'
-                    document.getElementById('myEntries').appendChild(heading)
                 }else {
 			        heading.innerText = 'Here are your entries!'
-                    document.getElementById('myEntries').appendChild(heading)
                     // console.log(data)
                     addElement(data)
                     sortEntries()
+                    console.log(token)
                 }
-			}else{
-			    location.href='unauthorized.html'
-				//alert(data['msg'])
 			}
         })
 }

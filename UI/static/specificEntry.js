@@ -1,12 +1,17 @@
 function viewSpecific(){
     // location.href='/MyDiary/UI/my_entry.html'
-    let entryId = localStorage.getItem("viewEntryId")
-    fetch('https://r-mydiary.herokuapp.com/api/v1/entries/' + entryId, {
+    let entryId = localStorage.getItem("viewEntryId");
+    let token = localStorage.getItem('token');
+    // fetch('https://r-mydiary.herokuapp.com/api/v1/entries/' + entryId, {
+    fetch('http://127.0.0.1:5000/api/v1/entries/' + entryId, {
         method: 'GET',
-        headers: {Authorization : `Bearer ${document.cookie}`}
+        headers: {Authorization : `Bearer ${token}`}
     })
         .then((response) => response.json())
         .then(function (data) {
+            if (data['msg'] === 'Token has expired'){
+			        refreshToken()
+            }
 			if (data['message']['status'] === 'Success') {
 			    let newDate = new Date(data['message']['entry']['date'])
                 let dateOnly = newDate.toDateString()
@@ -23,12 +28,17 @@ function viewSpecific(){
 
 }
 function checkHeader(){
-    fetch('https://r-mydiary.herokuapp.com/home',{
+    let token = localStorage.getItem('token');
+    // fetch('https://r-mydiary.herokuapp.com/home',{
+    fetch('http://127.0.0.1:5000/home',{
         method:'GET',
-        headers: {Authorization : `Bearer ${document.cookie}`}
+        headers: {Authorization : `Bearer ${token}`}
     })
         .then((response) => response.json())
         .then((data) => {
+            if (data['msg'] === 'Token has expired'){
+			        refreshToken()
+			    }
             if (data['message'] === 'Welcome user'){
                 console.log(data)
                 console.log(localStorage.getItem('editClicked'))
@@ -50,13 +60,18 @@ function modifyEntry(){
         update.style.display = 'block';
         let entryId = localStorage.getItem("editEntryId")
         let myId = parseInt(entryId)
-        let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
+        // let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
+        let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
+        let token = localStorage.getItem('token')
         fetch(url, {
             method: 'GET',
-            headers: {Authorization : `Bearer ${document.cookie}`}
+            headers: {Authorization : `Bearer ${token}`}
         })
             .then((response) => response.json())
             .then(function (data) {
+                if (data['msg'] === 'Token has expired'){
+			        refreshToken()
+			    }
                 if (data['message']['status'] === 'Success') {
                     let newDate = new Date(data['message']['entry']['date'])
                     let dateOnly = newDate.toDateString()
@@ -85,16 +100,21 @@ function editUserEntry() {
     let entryId = localStorage.getItem("editEntryId")
     let title = document.getElementById('my_title').value
     let content = document.getElementById('my_content').innerText
+    let token = localStorage.getItem('token')
     let myId = parseInt(entryId)
-    let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
+    // let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
+    let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
     fetch( url, {
         method: 'PUT',
-        headers: {Authorization : `Bearer ${document.cookie}`,
+        headers: {Authorization : `Bearer ${token}`,
         'Content-Type':'application/json'},
         body: JSON.stringify({title:title, content:content})
     })
         .then((response) => response.json())
         .then(function (data) {
+            if (data['msg'] === 'Token has expired'){
+                refreshToken()
+            }
             if (data['message']['status'] === 'Success'){
                 location.href='home.html'
             }else {

@@ -12,11 +12,14 @@ class DatabaseConnection:
     def __init__(self):
         """dB connection and cursors"""
         self.connection = psycopg2.connect(
-            "dbname='d4ce0ovh3865o9'"
-            "user='bnpybdmuuyduqn'"
-            "host='ec2-54-163-246-5.compute-1.amazonaws.com'"
-            "password='1575180a621166871194e43a3ef908e4741aabb340e48b3bea28c4ddc332fe6f'"
-            "port='5432'")
+            "dbname='diarydb' user='postgres' host='localhost'"
+            "password='#5T0uch3' port='5432'")
+        # self.connection = psycopg2.connect(
+        #     "dbname='d6qeo01abo91hv'"
+        #     "user='uwglbrmbytkgcr'"
+        #     "host='ec2-54-225-92-1.compute-1.amazonaws.com'"
+        #     "password='1a74de1698d4020c5152424edd13587fd98627a225055e55ae5263e2bd8f5905'"
+        #     "port='5432'")
 
         self.connection.autocommit = True
 
@@ -272,6 +275,7 @@ class User(DatabaseConnection):
         else:
             msg['status'] = 'Fail'
             msg['message'] = 'You need to be logged in to logout!'
+            return {'message': msg}, 400
 
 
 class Entry(DatabaseConnection):

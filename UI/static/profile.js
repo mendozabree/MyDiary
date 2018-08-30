@@ -17,15 +17,19 @@ window.onload = function () {
 };
 function changeUsername() {
     let username = document.getElementById('username').value;
+    let token = localStorage.getItem('token');
     if (username || username !== "") {
         fetch('https://r-mydiary.herokuapp.com/api/v1/auth/change_username',{
             method: 'PUT',
-            headers: {Authorization : `Bearer ${document.cookie}`,
+            headers: {Authorization : `Bearer ${token}`,
             'Content-Type':'application/json'},
             body: JSON.stringify({username:username})
         })
             .then((response) => response.json())
             .then((data) => {
+                if (data['msg'] === 'Token has expired'){
+			        refreshToken()
+			    }
                 if (data['message']['status'] === 'Success'){
                     let msg = document.getElementById('uname')
                     msg.style.display = 'block'
@@ -45,16 +49,20 @@ function changePassword() {
     let currentPassword = document.getElementById('currentPassword').value;
     let newPassword = document.getElementById('newPassword').value;
     let confirmPassword = document.getElementById('confirmPassword').value;
+    let token = localStorage.getItem('token');
     if (newPassword || newPassword !== "") {
         fetch('https://r-mydiary.herokuapp.com/api/v1/auth/change_password',{
             method: 'PUT',
-            headers: {Authorization : `Bearer ${document.cookie}`,
+            headers: {Authorization : `Bearer ${token}`,
             'Content-Type':'application/json'},
             body: JSON.stringify({current_password:currentPassword,
                 new_password: newPassword, confirm_password:confirmPassword})
         })
             .then((response) => response.json())
             .then((data) => {
+                if (data['msg'] === 'Token has expired'){
+			        refreshToken()
+			    }
                 if (data['message']['status'] === 'Success'){
                     let msg = document.getElementById('pswd')
                     msg.style.display = 'block'

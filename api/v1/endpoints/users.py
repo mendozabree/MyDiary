@@ -4,7 +4,9 @@ This module contains the User endpoints, login and signup
 """
 
 from flask_restplus import Resource
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity,
+    create_refresh_token, jwt_refresh_token_required)
 import datetime
 
 from api import api
@@ -41,12 +43,13 @@ class Signup(Resource):
         if api.payload['password'] == api.payload['confirm_password']:
             result = db.register_user(new_user_data=api.payload)
             if isinstance(result, int):
-                expires = datetime.timedelta(hours=4)
+                expires = datetime.timedelta(minutes=4)
                 token = create_access_token(result, expires_delta=expires)
                 success = dict()
                 success['status'] = 'Success'
                 success['message'] = 'Welcome, to your diary'
-                success['token'] = token
+                success['access_token'] = token
+                success['refresh_token'] = create_refresh_token(result)
                 return {'message': success}, 201
             else:
                 return result, 400
@@ -71,17 +74,31 @@ class Login(Resource):
 
         result = db.login_user(login_data=login_data)
         if isinstance(result, int):
-            expires = datetime.timedelta(hours=4)
+            expires = datetime.timedelta(minutes=4)
             token = create_access_token(result, expires_delta=expires)
             success = dict()
             success['status'] = 'Success'
             success['message'] = 'Welcome, to your diary {}!'.format(
                 login_data['username'])
-            success['token'] = token
+            success['access_token'] = token
+            success['refresh_token'] = create_refresh_token(result)
             return {'message': success}, 200
 
         else:
             return result
+
+
+@api.route('/api/v1/refresh')
+class RefreshToken(Resource):
+    @jwt_refresh_token_required
+    def post(self):
+        current_user = get_jwt_identity()
+        success = dict()
+        success['status'] = 'Success'
+        success['message'] = 'New token created'
+        success['access_token'] = create_access_token(
+            identity=current_user, expires_delta=datetime.timedelta(minutes=4))
+        return {'message': success}, 200
 
 
 @api.route('/api/v1/auth/change_username')

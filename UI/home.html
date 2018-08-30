@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Merriweather|PT+Serif">
     <link rel="stylesheet" href="static/diary.css">
     <link rel="stylesheet" href="static/responsive.css">
     <link rel="stylesheet" href="static/buttons.css">
     <link rel="icon" href="img/favicon.ico">
-    <script src="static/getEntries.js"></script>
     <script src="./static/diary.js"></script>
+    <script src="static/getEntries.js"></script>
     <title>My Dairy</title>
 </head>
 <body onload="getEntries()">
@@ -23,7 +25,7 @@
                     <img src="img/dropdown.PNG" alt="" class="drpbtn" id="nav_img">
                     <div class="drpdwn-content">
                         <a href="profile.html">My Profile</a>
-                        <a href="sign_in.html">Logout</a>
+                        <a onclick="logout()">Logout</a>
                     </div>
                 </li>
                 <li class="col-2"></li>

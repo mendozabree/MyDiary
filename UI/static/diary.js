@@ -8,7 +8,8 @@ function registerUser() {
     let email = document.getElementById('email').value;
     let password = document.getElementById('password').value;
     let confirmPassword = document.getElementById('confirm_password').value;
-    fetch('https://r-mydiary.herokuapp.com/api/v1/auth/signup', {
+    // fetch('https://r-mydiary.herokuapp.com/api/v1/auth/signup', {
+    fetch('http://127.0.0.1:5000/api/v1/auth/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=UTF-8'
@@ -21,9 +22,10 @@ function registerUser() {
         .then((response) => response.json())
         .then(function (data) {
             if (data['message']['status'] === 'Success'){
-                let token = data['message']['token'];
-                document.cookie = token + ";expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-                document.cookie = token + ";path=/";
+                let accessToken = data['message']['access_token'];
+                localStorage.setItem('token', accessToken)
+                let refresh = data['message']['refresh_token']
+                localStorage.setItem('refreshToken', refresh)
                 location.href='./home.html'
             }else{
                 console.log(data['message']['message']);
@@ -36,7 +38,8 @@ function registerUser() {
 function login(){
     let username = document.getElementById('username').value;
     let password = document.getElementById('password').value;
-    fetch('https://r-mydiary.herokuapp.com/api/v1/auth/login', {
+    // fetch('https://r-mydiary.herokuapp.com/api/v1/auth/login', {
+    fetch('http://127.0.0.1:5000/api/v1/auth/login', {
         method: 'POST',
         headers:{
             'Content-Type': 'application/json; charset=UTF-8'
@@ -47,9 +50,10 @@ function login(){
         .then (function (result) {
             let output = result['message']['status'];
             if (output === 'Success'){
-                let token = result['message']['token'];
-                document.cookie = token + ";expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-                document.cookie = token + ";path=/";
+                let accessToken = result['message']['access_token'];
+                localStorage.setItem('token', accessToken)
+                let refresh = data['message']['refresh_token']
+                localStorage.setItem('refreshToken', refresh)
                 location.href='./home.html'
             }else {
                 let error = document.getElementById('status')
@@ -57,4 +61,46 @@ function login(){
                 error.setAttribute('class', 'error')
             }
         })
+}
+function login_status(){
+    let token = localStorage.getItem('token')
+    if (token){
+        console.log('I have the token')
+        location.href='home.html'
+    }
+    else {
+        console.log('I should login')
+    }
+}
+function logout() {
+    let token = localStorage.getItem('token')
+    fetch('http://127.0.0.1:5000/api/v1/logout',{
+        method: 'GET',
+        headers: {Authorization : `Bearer ${token}`}
+    })
+        .then((response) => response.json())
+        .then(function (data) {
+            if (data['message']['status'] === 'Success'){
+                location.href='sign_in.html'
+                localStorage.removeItem('token')
+                console.log(data)
+            }else {
+                alert(data['message']['message'])
+                console.log(data)
+            }
+        })
+}
+function refreshToken() {
+    localStorage.removeItem('token')
+    let refresh = localStorage.getItem('refreshToken')
+    fetch('http://127.0.0.1:5000/api/v1/refresh',{
+        method: 'POST',
+        headers: {Authorization : `Bearer ${refresh}`}
+    })
+        .then((response) => response.json())
+        .then(function (data) {
+            localStorage.setItem('token', data['message']['access_token'])
+            console.log(data['message']['access_token'])
+        })
+    return localStorage.getItem('token')
 }
