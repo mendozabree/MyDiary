@@ -2,8 +2,8 @@ function viewSpecific(){
     // location.href='/MyDiary/UI/my_entry.html'
     let entryId = localStorage.getItem("viewEntryId");
     let token = localStorage.getItem('token');
-    // fetch('https://r-mydiary.herokuapp.com/api/v1/entries/' + entryId, {
-    fetch('http://127.0.0.1:5000/api/v1/entries/' + entryId, {
+    fetch('https://r-mydiary.herokuapp.com/api/v1/entries/' + entryId, {
+    // fetch('http://127.0.0.1:5000/api/v1/entries/' + entryId, {
         method: 'GET',
         headers: {Authorization : `Bearer ${token}`}
     })
@@ -29,8 +29,8 @@ function viewSpecific(){
 }
 function checkHeader(){
     let token = localStorage.getItem('token');
-    // fetch('https://r-mydiary.herokuapp.com/home',{
-    fetch('http://127.0.0.1:5000/home',{
+    fetch('https://r-mydiary.herokuapp.com/home',{
+    // fetch('http://127.0.0.1:5000/home',{
         method:'GET',
         headers: {Authorization : `Bearer ${token}`}
     })
@@ -60,8 +60,8 @@ function modifyEntry(){
         update.style.display = 'block';
         let entryId = localStorage.getItem("editEntryId")
         let myId = parseInt(entryId)
-        // let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
-        let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
+        let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
+        // let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
         let token = localStorage.getItem('token')
         fetch(url, {
             method: 'GET',
@@ -102,8 +102,8 @@ function editUserEntry() {
     let content = document.getElementById('my_content').innerText
     let token = localStorage.getItem('token')
     let myId = parseInt(entryId)
-    // let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
-    let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
+    let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
+    // let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
     fetch( url, {
         method: 'PUT',
         headers: {Authorization : `Bearer ${token}`,

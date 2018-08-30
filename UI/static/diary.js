@@ -8,8 +8,8 @@ function registerUser() {
     let email = document.getElementById('email').value;
     let password = document.getElementById('password').value;
     let confirmPassword = document.getElementById('confirm_password').value;
-    // fetch('https://r-mydiary.herokuapp.com/api/v1/auth/signup', {
-    fetch('http://127.0.0.1:5000/api/v1/auth/signup', {
+    fetch('https://r-mydiary.herokuapp.com/api/v1/auth/signup', {
+    // fetch('http://127.0.0.1:5000/api/v1/auth/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=UTF-8'
@@ -38,8 +38,8 @@ function registerUser() {
 function login(){
     let username = document.getElementById('username').value;
     let password = document.getElementById('password').value;
-    // fetch('https://r-mydiary.herokuapp.com/api/v1/auth/login', {
-    fetch('http://127.0.0.1:5000/api/v1/auth/login', {
+    fetch('https://r-mydiary.herokuapp.com/api/v1/auth/login', {
+    // fetch('http://127.0.0.1:5000/api/v1/auth/login', {
         method: 'POST',
         headers:{
             'Content-Type': 'application/json; charset=UTF-8'
@@ -74,7 +74,7 @@ function login_status(){
 }
 function logout() {
     let token = localStorage.getItem('token')
-    fetch('http://127.0.0.1:5000/api/v1/logout',{
+    fetch('https://r-mydiary.herokuapp.com/api/v1/logout',{
         method: 'GET',
         headers: {Authorization : `Bearer ${token}`}
     })
