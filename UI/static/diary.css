@@ -132,7 +132,8 @@ h3, h4{
     color: #1e1e1e;
 }
 .sample_text{
-    font-family: Cambria;
+    font-family: Open Sans, Serif;
+    padding: 10px 40px 0 40px;
     font-size: 18px;
     line-height: 140%;
     /*word-spacing: 3px;*/
