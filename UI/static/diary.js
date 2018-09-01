@@ -27,6 +27,7 @@ function registerUser() {
                 localStorage.setItem('token', accessToken);
                 let refresh = data['message']['refresh_token'];
                 localStorage.setItem('refreshToken', refresh);
+                localStorage.setItem('user', username);
                 location.href='./home.html'
             }else{
                 let errorMessages = document.getElementById('output');
@@ -86,6 +87,7 @@ function logout() {
                 location.href='sign_in.html';
                 localStorage.removeItem('token');
                 localStorage.removeItem('numberEntries')
+                localStorage.removeItem('user')
             }
         })
 }
