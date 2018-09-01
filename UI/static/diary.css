@@ -121,7 +121,7 @@ h3, h4{
     border-radius: 5px;
 }
 .sampleText{
-    font-family: Cambria;
+    font-family: Open Sans, Serif;
     font-size: 18px;
     padding: 10px 40px 0 40px;
     height: 90px;
@@ -366,8 +366,10 @@ li.dropdown{display: inline-block}
 }
 #my_title{
     outline: 0;
-    font-size:  16px;
+    font-size:  20px;
     border: solid 1px lightgrey;
+    padding: 5px 10px;
+    font-family: Roboto Slab, Serif;
 }
 #my_content{
     outline: 0;
@@ -375,7 +377,9 @@ li.dropdown{display: inline-block}
     background-color: rgb(252, 252, 252);
     border-radius: 5px;
     padding: 10px 30px;
+    font-family: Open Sans, Serif;
     margin: 10px 0;
+    font-size: 16px;
 }
 #imgUpload{
     display: none;

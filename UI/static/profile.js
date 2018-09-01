@@ -1,6 +1,8 @@
 window.onload = function () {
-    let imgUpload = document.getElementById('imgUpload')
-    let uploadBtn = document.getElementById('uploadBtn')
+    checkExpired()
+    let imgUpload = document.getElementById('imgUpload');
+    let uploadBtn = document.getElementById('uploadBtn');
+    document.getElementById('username').innerText = localStorage.getItem('user');
     
     uploadBtn.onclick = function () {
         imgUpload.click();
@@ -8,12 +10,15 @@ window.onload = function () {
     function previewImage(uploader){
         if(uploader.files && uploader.files[0]){
             let userPicture = document.getElementById('userPicture');
-            userPicture.setAttribute('src', window.URL.createObjectURL(uploader.files[0]));
+            userPicture.setAttribute('src', window.URL.createObjectURL(
+                uploader.files[0]));
         }
     }
     imgUpload.onchange = function () {
         previewImage(this)
-    }
+    };
+    document.getElementById('no_of_entries').innerText = localStorage.getItem(
+        'numberEntries')
 };
 function changeUsername() {
     let username = document.getElementById('username').value;
@@ -31,17 +36,19 @@ function changeUsername() {
 			        refreshToken()
 			    }
                 if (data['message']['status'] === 'Success'){
-                    let msg = document.getElementById('uname')
-                    msg.style.display = 'block'
-                    document.getElementById('uname').innerText = data['message']['message']
+                    let msg = document.getElementById('uname');
+                    msg.style.display = 'block';
+                    document.getElementById('uname').innerText =
+                        data['message']['message'];
                     document.getElementById('username').value = ''
                 } else {
-                    let error = document.getElementById('errorMsg')
-                    error.style.display = 'block'
-                    document.getElementById('errorMsg').innerText = data['message']['message']
+                    let error = document.getElementById('errorMsg');
+                    error.style.display = 'block';
+                    document.getElementById('errorMsg').innerText =
+                        data['message']['message']
                 }
             })
-    }let error = document.getElementById('uname')
+    }let error = document.getElementById('uname');
     error.style.display = 'none'
 
 }
@@ -51,6 +58,7 @@ function changePassword() {
     let confirmPassword = document.getElementById('confirmPassword').value;
     let token = localStorage.getItem('token');
     if (newPassword || newPassword !== "") {
+
         fetch('https://r-mydiary.herokuapp.com/api/v1/auth/change_password',{
             method: 'PUT',
             headers: {Authorization : `Bearer ${token}`,
@@ -64,20 +72,22 @@ function changePassword() {
 			        refreshToken()
 			    }
                 if (data['message']['status'] === 'Success'){
-                    let msg = document.getElementById('pswd')
-                    msg.style.display = 'block'
-                    document.getElementById('pswd').innerText = data['message']['message']
-                    document.getElementById('currentPassword').value = ''
-                    document.getElementById('newPassword').value = ''
+                    let msg = document.getElementById('pswd');
+                    msg.style.display = 'block';
+                    document.getElementById('pswd').innerText =
+                        data['message']['message'];
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
                     document.getElementById('confirmPassword').value = ''
                 } else {
-                    let error = document.getElementById('errorMsg')
-                    error.style.display = 'block'
-                    document.getElementById('errorMsg').innerText = data['message']['message']
+                    let error = document.getElementById('errorMsg');
+                    error.style.display = 'block';
+                    document.getElementById('errorMsg').innerText =
+                        data['message']['message']
                 }
             })
-    }let error = document.getElementById('errorMsg')
-    error.style.display = 'none'
-    let msg = document.getElementById('pswd')
+    }let error = document.getElementById('errorMsg');
+    error.style.display = 'none';
+    let msg = document.getElementById('pswd');
     msg.style.display = 'none'
 }

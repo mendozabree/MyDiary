@@ -43,7 +43,7 @@ class Signup(Resource):
         if api.payload['password'] == api.payload['confirm_password']:
             result = db.register_user(new_user_data=api.payload)
             if isinstance(result, int):
-                expires = datetime.timedelta(minutes=4)
+                expires = datetime.timedelta(hours=4)
                 token = create_access_token(result, expires_delta=expires)
                 success = dict()
                 success['status'] = 'Success'
@@ -74,14 +74,15 @@ class Login(Resource):
 
         result = db.login_user(login_data=login_data)
         if isinstance(result, int):
-            expires = datetime.timedelta(minutes=4)
+            expires = datetime.timedelta(hours=4)
             token = create_access_token(result, expires_delta=expires)
+            refresh_token = create_refresh_token(result)
             success = dict()
             success['status'] = 'Success'
             success['message'] = 'Welcome, to your diary {}!'.format(
                 login_data['username'])
             success['access_token'] = token
-            success['refresh_token'] = create_refresh_token(result)
+            success['refresh_token'] = refresh_token
             return {'message': success}, 200
 
         else:
@@ -97,7 +98,7 @@ class RefreshToken(Resource):
         success['status'] = 'Success'
         success['message'] = 'New token created'
         success['access_token'] = create_access_token(
-            identity=current_user, expires_delta=datetime.timedelta(minutes=4))
+            identity=current_user, expires_delta=datetime.timedelta(hours=4))
         return {'message': success}, 200
 
 

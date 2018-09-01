@@ -1,7 +1,9 @@
 function viewSpecific(){
-    // location.href='/MyDiary/UI/my_entry.html'
+    checkExpired()
     let entryId = localStorage.getItem("viewEntryId");
     let token = localStorage.getItem('token');
+    document.getElementById('username').innerText = localStorage.getItem('user')
+
     fetch('https://r-mydiary.herokuapp.com/api/v1/entries/' + entryId, {
     // fetch('http://127.0.0.1:5000/api/v1/entries/' + entryId, {
         method: 'GET',
@@ -13,22 +15,20 @@ function viewSpecific(){
 			        refreshToken()
             }
 			if (data['message']['status'] === 'Success') {
-			    let newDate = new Date(data['message']['entry']['date'])
-                let dateOnly = newDate.toDateString()
-                document.getElementById('date').innerText = dateOnly
-                document.getElementById('title').innerText = data['message']['entry']['title']
-                document.getElementById('content').innerText = data['message']['entry']['content']
-			}else{
-				alert(data['message']['message'])
+			    let newDate = new Date(data['message']['entry']['date']);
+                document.getElementById('date').innerText = newDate.toDateString();
+                document.getElementById('title').innerText =
+                    data['message']['entry']['title'];
+                document.getElementById('content').innerText =
+                    data['message']['entry']['content'];
 			}
-        })
+        });
     localStorage.removeItem('viewEntryId')
-    console.log(localStorage.getItem('viewEntryId'))
-    console.log(localStorage.getItem('editEntryId'))
-
 }
+// checks if token is expired and calls function to populate fields
 function checkHeader(){
     let token = localStorage.getItem('token');
+
     fetch('https://r-mydiary.herokuapp.com/home',{
     // fetch('http://127.0.0.1:5000/home',{
         method:'GET',
@@ -40,29 +40,31 @@ function checkHeader(){
 			        refreshToken()
 			    }
             if (data['message'] === 'Welcome user'){
-                console.log(data)
-                console.log(localStorage.getItem('editClicked'))
-                console.log(localStorage.getItem('editEntryId'))
                 modifyEntry()
-            }if (data['msg'] === "Token has expired") {
-                location.href='unauthorized.html'
-                console.log(data)
-            }if (data['msg'] === "Missing Authorization Header"){
+            }
+            if (data['msg'] === "Missing Authorization Header"){
                 location.href='login_required.html'
             }
         })
 }
+// Get the entry info and populate the fields before the user edits.
 function modifyEntry(){
+    checkExpired()
+    let error = document.getElementById('error');
+    error.style.display = 'none';
+    document.getElementById('username').innerText = localStorage.getItem('user')
     if (localStorage.getItem("editClicked") === "true"){
+        let update = document.getElementById('updateBtn');
+        update.style.display = 'block';
         let entryDate = document.getElementById('my_date');
         entryDate.setAttribute('disabled', 'disabled');
-        let update = document.getElementById('updateBtn')
-        update.style.display = 'block';
-        let entryId = localStorage.getItem("editEntryId")
-        let myId = parseInt(entryId)
-        let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
-        // let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
-        let token = localStorage.getItem('token')
+
+        let token = localStorage.getItem('token');
+        let entryId = localStorage.getItem("editEntryId");
+        let myId = parseInt(entryId);
+        let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId;
+        // let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId;
+
         fetch(url, {
             method: 'GET',
             headers: {Authorization : `Bearer ${token}`}
@@ -73,37 +75,33 @@ function modifyEntry(){
 			        refreshToken()
 			    }
                 if (data['message']['status'] === 'Success') {
-                    let newDate = new Date(data['message']['entry']['date'])
-                    let dateOnly = newDate.toDateString()
-                    document.getElementById('my_date').innerText = dateOnly
-                    document.getElementById('my_title').value = data['message']['entry']['title']
-                    document.getElementById('my_content').innerText = data['message']['entry']['content']
-                    // console.log(dateOnly)
-                }if (data['message']['status'] === 'Fail'){
-                    alert('You can no longer edit this entry!')
-                    console.log(data)
-                    location.href='home.html'
+                    let newDate = new Date(data['message']['entry']['date']);
+                    document.getElementById('my_date').innerText =
+                        newDate.toDateString();
+                    document.getElementById('my_title').value =
+                        data['message']['entry']['title'];
+                    document.getElementById('my_content').innerText =
+                        data['message']['entry']['content']
                 }
             });
         localStorage.removeItem("editClicked")
-    }else{
+    }else{ //Make Save button visible for someone making a new entry
         let save = document.getElementById('saveBtn');
         save.style.display = 'block';
         let myDate = new Date();
-        let myDay = myDate.toDateString()
-        let myString = myDay.toString()
-        document.getElementById('my_date').innerText = myString
-        console.log(myDay)
+        let myDay = myDate.toDateString();
+        document.getElementById('my_date').innerText = myDay.toString();
     }
 }
 function editUserEntry() {
-    let entryId = localStorage.getItem("editEntryId")
-    let title = document.getElementById('my_title').value
-    let content = document.getElementById('my_content').innerText
-    let token = localStorage.getItem('token')
-    let myId = parseInt(entryId)
-    let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId
-    // let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId
+    let entryId = localStorage.getItem("editEntryId");
+    let title = document.getElementById('my_title').value;
+    let content = document.getElementById('my_content').innerText;
+    let token = localStorage.getItem('token');
+    let myId = parseInt(entryId);
+    let url = 'https://r-mydiary.herokuapp.com/api/v1/entries/' + myId;
+    // let url = 'http://127.0.0.1:5000/api/v1/entries/' + myId;
+
     fetch( url, {
         method: 'PUT',
         headers: {Authorization : `Bearer ${token}`,
@@ -117,10 +115,7 @@ function editUserEntry() {
             }
             if (data['message']['status'] === 'Success'){
                 location.href='home.html'
-            }else {
-                // alert(data)
-                console.log(data)
             }
-        })
+        });
     localStorage.removeItem('editEntryId')
 }

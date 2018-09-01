@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Merriweather">
+      href="https://fonts.googleapis.com/css?family=Merriweather|Roboto+Slab|Open+Sans">
     <link rel="stylesheet" href="static/diary.css">
     <link rel="stylesheet" href="static/responsive.css">
     <link rel="icon" href="img/favicon.ico">
@@ -20,6 +20,8 @@
                 <li><img src="img/MyDiary-small.PNG" alt="My Diary" id="myImg"></li>
                 <li class="col-1"><a href=home.html>Home</a></li>
                 <li class="col-1"><a class="active" href="new_entry.html">Entry</a></li>
+                <li class="col-2"></li>
+                <li class="col-1"><label id="username"></label></li>
                 <li class="col-1 userPic"><img src="img/profile.jpg"></li>
                 <li class="dropdown">
                     <img src="img/dropdown.PNG" alt="" class="drpbtn" id="nav_img">
@@ -46,11 +48,12 @@
                 </div>
                 <div class="row">
                     <div class="col-12 col-m-12" contenteditable="true" id="my_content" aria-placeholder="How are you today?">
-                    <!--<textarea class="col-12 col-m-12" rows="20" placeholder="How are you today?" id="my_content"></textarea>-->
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6 error" id="error"></div>
+                    <div class="col-6">
+                        <div class="col-6 error" id="error"></div>
+                    </div>
                     <div class="col-3">
                         <button class="primary-btn save-btn" id="saveBtn" onclick="userEntry()">Save</button>
                         <button class="primary-btn save-btn" id="updateBtn" onclick="editUserEntry()">Update</button>
