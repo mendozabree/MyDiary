@@ -45,6 +45,9 @@ function checkHeader(){
             if (data['msg'] === "Missing Authorization Header"){
                 location.href='login_required.html'
             }
+            if (data['msg'] === "Not enough segments"){
+                location.href='login_required.html'
+            }
         })
 }
 // Get the entry info and populate the fields before the user edits.

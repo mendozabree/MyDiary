@@ -120,5 +120,8 @@ function checkExpired() {
             if (data['msg'] === "Missing Authorization Header"){
                 location.href='login_required.html'
             }
+            if (data['msg'] === "Not enough segments"){
+                location.href='login_required.html'
+            }
         })
 }
