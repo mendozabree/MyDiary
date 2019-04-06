@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Entry</title>
+    <link rel="icon" href="img/favicon.ico">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Merriweather|Open+Sans">
+    <link rel="stylesheet" href="static/diary.css">
+    <link rel="stylesheet" href="static/responsive.css">
+    <script src="static/diary.js"></script>
+    <script src="static/getEntries.js"></script>
+    <script src="static/specificEntry.js"></script>
+</head>
+<body onload="viewSpecific()">
+    <div class="row">
+        <nav class="nav col-12">
+            <ul class="top-nav">
+                <li class="col-2"></li>
+                <li><img src="img/MyDiary-small.PNG" alt="My Diary" id="myImg"></li>
+                <li class="col-1"><a href=home.html>Home</a></li>
+                <li class="col-1"><a class="active" href="my_entry.html">Entry</a></li>
+                <li class="col-2"></li>
+                <li class="col-1"><label id="username"></label></li>
+                <li class="col-1 userPic"><img src="img/profile.jpg"></li>
+                <li class="dropdown">
+                    <img src="img/dropdown.PNG" alt="" class="drpbtn" id="nav_img">
+                    <div class="drpdwn-content">
+                        <a href="profile.html">My Profile</a>
+                        <a onclick="logout()">Logout</a>
+                    </div>
+                </li>
+                <li class="col-2"></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="container row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div id="entry" class="row new_entry">
+                <div class="row titleBlock">
+                    <div class="col-3">
+                        <label class="date-label" id="date"></label>
+                    </div>
+                    <div class="col-8">
+                        <label id="title" class="date-label"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 sample_text" id="content">
+                    </div>
+                </div>
+        </div>
+        </div>
+        <div class="col-2"></div>
+
+    </div>
+</body>
+</html>
